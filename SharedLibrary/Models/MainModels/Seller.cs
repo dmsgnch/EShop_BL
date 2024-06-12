@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace EShop_BL.Models.MainModels;
+namespace SharedLibrary.Models.MainModels;
 
 public class Seller
 {

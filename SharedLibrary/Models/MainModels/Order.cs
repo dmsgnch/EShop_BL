@@ -1,9 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using EShop_BL.Models.Enums;
-using EShop_BL.Models.SecondaryModels;
+using SharedLibrary.Models.Enums;
+using SharedLibrary.Models.SecondaryModels;
 
-namespace EShop_BL.Models.MainModels;
+namespace SharedLibrary.Models.MainModels;
 
 public class Order
 {

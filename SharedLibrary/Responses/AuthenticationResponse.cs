@@ -1,5 +1,5 @@
 ﻿
-using EShop_BL.Models.MainModels;
+using SharedLibrary.Models.MainModels;
 using SharedLibrary.Responses.Abstract;
 
 namespace SharedLibrary.Responses

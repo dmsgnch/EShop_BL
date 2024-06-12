@@ -1,8 +1,7 @@
 using EShop_BL.Helpers;
-using EShop_BL.Models.MainModels;
 using EShop_BL.Services.Abstract;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
+using SharedLibrary.Models.MainModels;
 
 namespace EShop_BL.Controllers.Network.ClientCommunication;
 

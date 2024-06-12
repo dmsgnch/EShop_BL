@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
-using EShop_BL.Models.SecondaryModels;
+using SharedLibrary.Models.SecondaryModels;
 
-namespace EShop_BL.Models.MainModels;
+namespace SharedLibrary.Models.MainModels;
 
 public class User
 {
@@ -27,6 +27,7 @@ public class User
         string name, 
         string lastName, 
         string passwordHash,
+        string salt,
         string phoneNumber, 
         string email, 
         Role? role = null, 
@@ -41,6 +42,7 @@ public class User
         Patronymic = patronymic;
 
         PasswordHash = passwordHash;
+        Salt = salt;
         
         Email = email;
         PhoneNumber = phoneNumber;

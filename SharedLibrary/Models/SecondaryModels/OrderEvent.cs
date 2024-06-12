@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
-using EShop_BL.Models.Enums;
-using EShop_BL.Models.MainModels;
+using SharedLibrary.Models.Enums;
+using SharedLibrary.Models.MainModels;
 
-namespace EShop_BL.Models.SecondaryModels;
+namespace SharedLibrary.Models.SecondaryModels;
 
 public class OrderEvent
 {

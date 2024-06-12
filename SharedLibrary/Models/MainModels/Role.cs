@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
-using EShop_BL.Models.Enums;
+using SharedLibrary.Models.Enums;
 
-namespace EShop_BL.Models.MainModels;
+namespace SharedLibrary.Models.MainModels;
 
 public class Role
 {

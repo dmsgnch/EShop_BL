@@ -5,13 +5,12 @@ namespace SharedLibrary.Requests;
 [Serializable]
 public class LoginRequest
 {
-    [Required] public string Name { get; set; }
-    [Required] public string LastName { get; set; }
-    public string Patronymic { get; set; }
+    [Required(ErrorMessage = "Email is required")]
+    [EmailAddress(ErrorMessage = "Invalid Email Address")]
+    public string Email { get; set; }
 
-    [Required, EmailAddress] public string Email { get; set; }
-    [Required, Phone] public string PhoneNumber { get; set; }
-
-    [Required, DataType(DataType.Password)]
+    [Required(ErrorMessage = "Password is required")]
+    [DataType(DataType.Password)]
+    [StringLength(30, MinimumLength = 6, ErrorMessage = "Password must be between 2 and 50 characters")]
     public string Password { get; set; }
 }

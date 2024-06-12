@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using EShop_BL.Models.MainModels;
+using SharedLibrary.Models.MainModels;
 
-namespace EShop_BL.Models.SecondaryModels;
+namespace SharedLibrary.Models.SecondaryModels;
 
 public class DeliveryAddress
 {

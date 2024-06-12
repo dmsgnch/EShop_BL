@@ -1,4 +1,4 @@
-using EShop_BL.Models.MainModels;
+using SharedLibrary.Models.MainModels;
 
 namespace SharedLibrary.Responses.Abstract;
 

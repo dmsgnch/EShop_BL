@@ -1,4 +1,4 @@
-﻿namespace EShop_BL.Models.Enums;
+﻿namespace SharedLibrary.Models.Enums;
 
     public enum PaymentMethod
     {

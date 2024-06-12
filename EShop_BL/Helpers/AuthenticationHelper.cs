@@ -1,5 +1,5 @@
-using EShop_BL.Models.MainModels;
 using EShop_BL.Services.Abstract;
+using SharedLibrary.Models.MainModels;
 
 namespace EShop_BL.Helpers;
 
