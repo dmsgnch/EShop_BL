@@ -111,14 +111,21 @@ public class AuthenticationService : IAuthenticationService
     private string GenerateJwtToken(ClaimsIdentity subject)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"] ?? throw new Exception("Config key error"));
+        var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"] 
+                                          ?? throw new Exception("Config key error"));
+        
+        if (key.Length < 32)
+        {
+            throw new Exception("The key must be at least 32 bytes long.");
+        }
+
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = subject,
             Expires = DateTime.Now.AddHours(_jwtTokenDaysLiveTime),
-            SigningCredentials =
-                new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
         };
+
         var token = tokenHandler.CreateToken(tokenDescriptor);
         return tokenHandler.WriteToken(token);
     }
