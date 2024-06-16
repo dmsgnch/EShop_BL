@@ -1,9 +1,9 @@
 using EShop_BL.Helpers;
-using EShop_BL.Services.Abstract;
+using EShop_BL.Services.Main.Abstract;
 using Microsoft.AspNetCore.Mvc;
 using SharedLibrary.Models.MainModels;
 
-namespace EShop_BL.Controllers.Network.ClientCommunication;
+namespace EShop_BL.Controllers;
 
 [ApiController, Route("seller")]
 public class SellerController : ControllerBase
@@ -22,7 +22,7 @@ public class SellerController : ControllerBase
 
         if (response.IsSuccessStatusCode)
         {
-            var res = await JsonHelper.GetTypeFromResponse<List<Seller>>(response);
+            var res = await JsonHelper.GetTypeFromResponseAsync<List<Seller>>(response);
             
             return Ok(res);
         }

@@ -1,7 +1,7 @@
 using EShop_BL.Components;
-using EShop_BL.Services.Abstract;
+using EShop_BL.Services.Main.Abstract;
 
-namespace EShop_BL.Services;
+namespace EShop_BL.Services.Main;
 
 public class SellerService : ISellerService
 {

@@ -1,4 +1,6 @@
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 
 namespace SharedLibrary.Requests;
 
@@ -15,6 +17,7 @@ public class RegisterRequest
     [StringLength(30, MinimumLength = 2, ErrorMessage = "The last name must be a minimum of 6 and a maximum of 30 characters")]
     public string LastName { get; set; }
     
+    [MaybeNull]
     [DataType(DataType.Text)]
     [StringLength(30, MinimumLength = 2, ErrorMessage = "The patronymic must be a minimum of 6 and a maximum of 30 characters")]
     public string Patronymic { get; set; }

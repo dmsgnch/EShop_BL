@@ -1,11 +1,11 @@
-using EShop_BL.Services.Abstract;
+using EShop_BL.Services.Main.Abstract;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using SharedLibrary.Requests;
 using SharedLibrary.Responses;
 using SharedLibrary.Routes;
 
-namespace EShop_BL.Controllers.Network.ClientCommunication;
+namespace EShop_BL.Controllers;
 
 [ApiController]
 [Route(ApiRoutes.Controllers.Authentication)]
@@ -24,6 +24,7 @@ public class AuthenticationController : ControllerBase
         var result = await _authenticationService.RegisterAsync(regRequest);
         return result.Token is null ? BadRequest(result) : Ok(result);
     }
+
     [HttpPost(ApiRoutes.Authentication.Login)]
     public async Task<IActionResult> LoginAsync([FromBody] LoginRequest request)
     {

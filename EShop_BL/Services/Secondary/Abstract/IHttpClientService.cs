@@ -1,6 +1,6 @@
 using EShop_BL.Components;
 
-namespace EShop_BL.Services.Abstract;
+namespace EShop_BL.Services.Main.Abstract;
 
 public interface IHttpClientService
 {

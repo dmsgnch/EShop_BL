@@ -5,7 +5,7 @@ namespace EShop_BL.Helpers;
 
 public static class JsonHelper
 {
-    public static async Task<T> GetTypeFromResponse<T>(HttpResponseMessage res)
+    public static async Task<T> GetTypeFromResponseAsync<T>(HttpResponseMessage res)
     {
         var jsonString = await res.Content.ReadAsStringAsync();
         return JsonConvert.DeserializeObject<T>(jsonString) ??

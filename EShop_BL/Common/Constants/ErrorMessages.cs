@@ -9,4 +9,9 @@ public static class ErrorMessages
         public const string IncorrectEmailFormat = $"Incorrect email format";
         public const string IncorrectEmailOrPassword = $"Email or password is incorrect";
     }
+    
+    public static class User
+    {
+        public const string TokenIsIncorrect = $"Token is incorrect";
+    }
 }
