@@ -21,20 +21,8 @@ public class UserService : IUserService
         _httpClient = httpClient;
     }
     
-    public async Task<GetUserResponse> GetUserByTokenAsync(string stringToken)
+    public async Task<LambdaResponse<User>> GetUserByIdAsync(string userId)
     {
-        var handler = new JwtSecurityTokenHandler();
-        
-        var token = handler.ReadToken(stringToken) as JwtSecurityToken;
-
-        if (token is null)
-        {
-            return new GetUserResponse(info: ErrorMessages.User.TokenIsIncorrect);;
-        }
-
-        var userId = token.Claims.First(claim => claim.Type == "id").Value ??
-                     throw new Exception("User id not found in token");
-
         var userResponse = await _httpClient.SendRequestAsync(new RestRequestForm(
                 ApiRoutesDb.Controllers.User + ApiRoutesDb.Universal.GetById + userId,
                 HttpMethod.Get));
@@ -42,17 +30,19 @@ public class UserService : IUserService
         return await ResponseHandlerAsync(userResponse);
     }
     
-    private async Task<GetUserResponse> ResponseHandlerAsync(HttpResponseMessage response)
+    private async Task<LambdaResponse<User>> ResponseHandlerAsync(HttpResponseMessage response)
     {
         if (!response.IsSuccessStatusCode)
         {
             var errorResponse = await JsonHelper.GetTypeFromResponseAsync<LambdaResponse>(response);
 
-            return new GetUserResponse(info: errorResponse.Info);
+            return new LambdaResponse<User>(info: errorResponse.Info);
         }
 
-        var userResponse = await JsonHelper.GetTypeFromResponseAsync<User>(response);
+        var successResponse = await JsonHelper.GetTypeFromResponseAsync<LambdaResponse<User>>(response);
 
-        return new GetUserResponse(user: userResponse);
+        User userResponse = successResponse.ResponseObject ?? throw new Exception("User is null");
+
+        return new LambdaResponse<User>(responseObject: userResponse);
     }
 }

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
 using SharedLibrary.Models.SecondaryModels;
 
 namespace SharedLibrary.Models.MainModels;

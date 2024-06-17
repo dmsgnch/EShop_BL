@@ -16,6 +16,6 @@ public static class ApiRoutes
     
     public static class User
     {
-        public const string GetByToken = "GetByToken";
+        public const string GetById = "GetById";
     }
 }

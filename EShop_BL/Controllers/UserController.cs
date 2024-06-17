@@ -19,10 +19,10 @@ public class UserController : ControllerBase
         _userService = userService;
     }
 
-    [HttpGet(ApiRoutes.User.GetByToken)]
-    public async Task<IActionResult> GetByTokenAsync([FromBody] GetUserByTokenRequest request)
+    [HttpGet(ApiRoutes.User.GetById)]
+    public async Task<IActionResult> GetByIdAsync([FromBody] string userId)
     {
-        var result = await _userService.GetUserByTokenAsync(request.Token);
-        return result.User is null ? BadRequest(result) : Ok(result);
+        var result = await _userService.GetUserByIdAsync(userId);
+        return result.ResponseObject is null ? BadRequest(result) : Ok(result);
     }
 }

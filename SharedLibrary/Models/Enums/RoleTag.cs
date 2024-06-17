@@ -4,5 +4,5 @@ public enum RoleTag
 {
     Customer = 1,
     Manager = 2,
-    AdvManager = 3,
+    Seller = 3,
 }

@@ -49,7 +49,13 @@ public class HttpClientService : IHttpClientService
                         "Communication with the database server occurred, but an unsuccessful action code was received");
                     Console.WriteLine(
                         $"The query returned an error code: {response.StatusCode}. Message: {await response.Content.ReadAsStringAsync()}");
-                    return response;
+                    return new HttpResponseMessage(HttpStatusCode.BadGateway)
+                    {
+                        Content = new StringContent(
+                            JsonConvert.SerializeObject(new LambdaResponse(
+                                "An unexpected error occurred on the server. Please try again! " +
+                                "If the problem persists, please contact support.")))
+                    };
                 }
             }
             catch (HttpRequestException httpEx)

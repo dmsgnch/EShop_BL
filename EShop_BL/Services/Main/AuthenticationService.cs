@@ -138,7 +138,12 @@ public class AuthenticationService : IAuthenticationService
     {
         var subject = new ClaimsIdentity(new[]
         {
-            new Claim("id", user.UserId.ToString())
+            new Claim("id", user.UserId.ToString()),
+            new Claim("name", user.Name.ToString()),
+            new Claim("lastName", user.LastName.ToString()),
+            new Claim("email", user.Email.ToString()),
+            new Claim("phoneNumber", user.PhoneNumber.ToString()),
+            new Claim("role", user.Role.RoleTag.ToString()),
         });
 
         return subject;
