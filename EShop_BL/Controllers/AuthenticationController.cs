@@ -8,7 +8,7 @@ using SharedLibrary.Routes;
 namespace EShop_BL.Controllers;
 
 [ApiController]
-[Route(ApiRoutes.Controllers.Authentication)]
+[Route(ApiRoutes.Controllers.AuthenticationContr)]
 public class AuthenticationController : ControllerBase
 {
     private readonly IAuthenticationService _authenticationService;
@@ -18,17 +18,18 @@ public class AuthenticationController : ControllerBase
         _authenticationService = authService;
     }
 
-    [HttpPost(ApiRoutes.Authentication.Register)]
+    [HttpPost(ApiRoutes.AuthenticationActions.RegisterPath)]
     public async Task<IActionResult> RegisterAsync([FromBody] RegisterRequest regRequest)
     {
         var result = await _authenticationService.RegisterAsync(regRequest);
-        return result.Token is null ? BadRequest(result) : Ok(result);
+        return result.ResponseObject is null ? BadRequest(result) : Ok(result);
     }
 
-    [HttpPost(ApiRoutes.Authentication.Login)]
+    [HttpPost(ApiRoutes.AuthenticationActions.LoginPath)]
     public async Task<IActionResult> LoginAsync([FromBody] LoginRequest request)
     {
         var result = await _authenticationService.LoginAsync(request.Email, request.Password);
-        return result.Token is null ? BadRequest(result) : Ok(result);
+        result.ResponseObject ??= result.ResponseObject = "";
+        return String.IsNullOrEmpty(result.ResponseObject)  ? BadRequest(result) : Ok(result);
     }
 }

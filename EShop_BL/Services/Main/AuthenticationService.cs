@@ -8,7 +8,7 @@ using EShop_BL.Common.Constants;
 using EShop_BL.Services.Main.Abstract;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
-using SharedLibrary.Models.MainModels;
+using SharedLibrary.Models.DbModels.MainModels;
 using SharedLibrary.Requests;
 using SharedLibrary.Responses;
 using SharedLibrary.Routes;
@@ -31,62 +31,65 @@ public class AuthenticationService : IAuthenticationService
         _hashProvider = hashProvider;
     }
 
-    public async Task<AuthenticationResponse> RegisterAsync(RegisterRequest registerRequest)
+    public async Task<LambdaResponse<string>> RegisterAsync(RegisterRequest registerRequest)
     {
         return await GetAllUsersAsync(registerRequest);
     }
-    
+
     #region Register logic
 
-    private async Task<AuthenticationResponse> GetAllUsersAsync(RegisterRequest registerRequest)
+    private async Task<LambdaResponse<string>> GetAllUsersAsync(RegisterRequest registerRequest)
     {
         var usersResponse = await _httpClient.SendRequestAsync(new RestRequestForm(
-            ApiRoutesDb.Controllers.User + ApiRoutesDb.Universal.GetAll,
+            ApiRoutesDb.Controllers.UserContr + ApiRoutesDb.UniversalActions.GetAllPath,
             HttpMethod.Get));
+
+        var serverResponse = await JsonHelper.GetTypeFromResponseAsync<LambdaResponse<List<User>>>(usersResponse);
 
         if (!usersResponse.IsSuccessStatusCode)
         {
-            var errorResponse = await JsonHelper.GetTypeFromResponseAsync<LambdaResponse>(usersResponse);
-
-            return new AuthenticationResponse(info: errorResponse.Info);
+            return new LambdaResponse<string>(errorInfo: serverResponse.ErrorInfo);
         }
 
-        var users = await JsonHelper.GetTypeFromResponseAsync<List<User>>(usersResponse);
+        if (serverResponse.ResponseObject is null) throw new Exception("List<User> is null");
 
-        return await CheckUsersAsync(registerRequest, users);
+        return await CheckUsersAsync(registerRequest, serverResponse.ResponseObject);
     }
 
-    private async Task<AuthenticationResponse> CheckUsersAsync(RegisterRequest registerRequest, List<User> users)
+    private async Task<LambdaResponse<string>> CheckUsersAsync(RegisterRequest registerRequest, List<User> users)
     {
         if (users.Any(u => u.Email.Equals(registerRequest.Email)))
-            return new AuthenticationResponse(info: ErrorMessages.Authentication.UserAlreadyExistByEmail);
+            return new LambdaResponse<string>(errorInfo: ErrorMessages.AuthenticationMessages.UserAlreadyExistByEmail);
         if (users.Any(u => u.PhoneNumber.Equals(registerRequest.PhoneNumber)))
-            return new AuthenticationResponse(info: ErrorMessages.Authentication.UserAlreadyExistByPhone);
+            return new LambdaResponse<string>(errorInfo: ErrorMessages.AuthenticationMessages.UserAlreadyExistByPhone);
 
         if (users.Any(u => !Regex.IsMatch(u.Email, @"^[^@\s]+@[^@\s]+\.(com|net|org|gov)$", RegexOptions.IgnoreCase)))
-            return new AuthenticationResponse(info: ErrorMessages.Authentication.IncorrectEmailFormat);
+            return new LambdaResponse<string>(errorInfo: ErrorMessages.AuthenticationMessages.IncorrectEmailFormat);
 
         return await AddNewUserAsync(registerRequest);
     }
 
-    private async Task<AuthenticationResponse> AddNewUserAsync(RegisterRequest registerRequest)
+    private async Task<LambdaResponse<string>> AddNewUserAsync(RegisterRequest registerRequest)
     {
         var user = GetFilledUser(registerRequest);
 
         var response =
             await _httpClient.SendRequestAsync(new RestRequestForm(
-                ApiRoutesDb.Controllers.User + ApiRoutesDb.Universal.Create,
+                ApiRoutesDb.Controllers.UserContr + ApiRoutesDb.UniversalActions.CreatePath,
                 HttpMethod.Post, jsonData: JsonConvert.SerializeObject(user)));
+
+        var serverResponse = await JsonHelper.GetTypeFromResponseAsync<LambdaResponse<User>>(response);
 
         if (!response.IsSuccessStatusCode)
         {
-            var errorResponse = await JsonHelper.GetTypeFromResponseAsync<LambdaResponse>(response);
-
-            return new AuthenticationResponse(info: errorResponse.Info);
+            return new LambdaResponse<string>(errorInfo: serverResponse.ErrorInfo);
         }
+        
+        if (serverResponse.ResponseObject is null) throw new Exception("Response object is null");
 
-        return new AuthenticationResponse(GenerateJwtToken(AssembleClaimsIdentity(user)),
-            SuccessMessages.Authentication.SuccessfulRegister);
+        return new LambdaResponse<string>(
+            responseObject: GenerateJwtToken(AssembleClaimsIdentity(serverResponse.ResponseObject)),
+            info: SuccessMessages.AuthenticationMessages.SuccessfulRegister);
     }
 
     private User GetFilledUser(RegisterRequest registerRequest)
@@ -107,31 +110,32 @@ public class AuthenticationService : IAuthenticationService
 
         return user;
     }
-    
-    #endregion 
 
-    public async Task<AuthenticationResponse> LoginAsync(string email, string password)
+    #endregion
+
+    public async Task<LambdaResponse<string>> LoginAsync(string email, string password)
     {
         var usersResponse = await _httpClient.SendRequestAsync(new RestRequestForm(
-            ApiRoutesDb.Controllers.User + ApiRoutesDb.Universal.GetAll,
+            ApiRoutesDb.Controllers.UserContr + ApiRoutesDb.UniversalActions.GetAllPath,
             HttpMethod.Get));
+        
+        var serverResponse = await JsonHelper.GetTypeFromResponseAsync<LambdaResponse<List<User>>>(usersResponse);
 
         if (!usersResponse.IsSuccessStatusCode)
         {
-            var errorResponse = await JsonHelper.GetTypeFromResponseAsync<LambdaResponse>(usersResponse);
-
-            return new AuthenticationResponse(info: errorResponse.Info);
+            return new LambdaResponse<string>(errorInfo: serverResponse.ErrorInfo);
         }
+        
+        if (serverResponse.ResponseObject is null) throw new Exception("Response object is null");
 
-        var users = await JsonHelper.GetTypeFromResponseAsync<List<User>>(usersResponse);
-
-        User? user = users.FirstOrDefault(u => u.Email.Equals(email));
+        User? user = serverResponse.ResponseObject.FirstOrDefault(u => u.Email.Equals(email));
 
         if (user is null || user.PasswordHash != _hashProvider.ComputeHash(password, user.Salt))
-            return new AuthenticationResponse(info: ErrorMessages.Authentication.IncorrectEmailOrPassword);
+            return new LambdaResponse<string>(errorInfo: ErrorMessages.AuthenticationMessages.IncorrectEmailOrPassword);
 
-        return new AuthenticationResponse(GenerateJwtToken(AssembleClaimsIdentity(user)),
-            SuccessMessages.Authentication.SuccessfulLogin);
+        return new LambdaResponse<string>(
+            responseObject: GenerateJwtToken(AssembleClaimsIdentity(user)),
+            info: SuccessMessages.AuthenticationMessages.SuccessfulLogin);
     }
 
     private ClaimsIdentity AssembleClaimsIdentity(User user)
@@ -143,7 +147,7 @@ public class AuthenticationService : IAuthenticationService
             new Claim("lastName", user.LastName.ToString()),
             new Claim("email", user.Email.ToString()),
             new Claim("phoneNumber", user.PhoneNumber.ToString()),
-            new Claim("role", user.Role.RoleTag.ToString()),
+            new Claim("role", user.Role?.RoleTag.ToString() ?? throw new Exception("Role is null")),
         });
 
         return subject;

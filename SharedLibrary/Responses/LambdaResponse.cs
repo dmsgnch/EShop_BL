@@ -9,9 +9,10 @@ public class LambdaResponse : ResponseBase
         
     }
     
-    public LambdaResponse(string info)
+    public LambdaResponse(string? errorInfo = null, string? info = null)
     {
         Info = info;
+        ErrorInfo = errorInfo;
     }
 }
 
@@ -24,9 +25,10 @@ public class LambdaResponse<T> : ResponseBase where T: class
         
     }
     
-    public LambdaResponse(string info = null, T responseObject = null)
+    public LambdaResponse(string? errorInfo = null, string? info = null, T? responseObject = null)
     {
         Info = info;
+        ErrorInfo = errorInfo;
         ResponseObject = responseObject;
     }
 }

@@ -1,13 +1,10 @@
-using System.ComponentModel.DataAnnotations;
-using Newtonsoft.Json;
-using SharedLibrary.Models.SecondaryModels;
+using SharedLibrary.Models.DtoModels.SecondaryModels;
 
-namespace SharedLibrary.Models.MainModels;
+namespace SharedLibrary.Models.DtoModels.MainModels;
 
-public class User
+public class UserDTO
 {
-    [Key]
-    public Guid UserId { get; set; } = Guid.NewGuid();
+    public Guid UserDtoId { get; set; } = Guid.NewGuid();
 
     public string Name { get; set; }
     public string LastName { get; set; }
@@ -21,22 +18,19 @@ public class User
 
     #region Constructors
     
-    public User() 
-    {}
-    
-    public User(
+    public UserDTO(
         string name, 
         string lastName, 
         string passwordHash,
         string salt,
         string phoneNumber, 
         string email, 
-        Role? role = null, 
+        RoleDTO? role = null, 
         string? patronymic = null,
         string? anonymousToken = null)
     {
-        RoleId = role?.RoleId ?? 1;
-        Role = role;
+        RoleDtoId = role?.RoleDtoId ?? 1;
+        RoleDto = role;
         
         Name = name;
         LastName = lastName;
@@ -52,7 +46,7 @@ public class User
         {
             Guid.TryParse(anonymousToken, out Guid result);
         
-            UserId = result.Equals(Guid.Empty) ? 
+            UserDtoId = result.Equals(Guid.Empty) ? 
                 throw new ArgumentException($"Anonymous Token: {anonymousToken}, parsed incorrect") : 
                 result;
         }
@@ -63,17 +57,21 @@ public class User
     #region Relationships
 
     //Role
-    public int RoleId { get; set; }
-    public Role? Role { get; set; }
+    public int RoleDtoId { get; set; } = 1;
+    public RoleDTO? RoleDto { get; set; }
+    
+    //Seller
+    public Guid? SellerDtoId { get; set; }
+    public SellerDTO? SellerDto { get; set; }
     
     //Order
-    public List<Order> Orders { get; set; } = new();
+    public List<OrderDTO> OrdersDto { get; set; } = new();
 
     //Recipient
-    public Recipient? Recipient { get; set; }
+    public RecipientDTO? RecipientDto { get; set; }
 
     //DeliveryAddress
-    public DeliveryAddress? DeliveryAddress { get; set; }
+    public DeliveryAddressDTO? DeliveryAddressDto { get; set; }
 
     #endregion
 }

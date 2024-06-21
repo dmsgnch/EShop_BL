@@ -1,12 +1,12 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SharedLibrary.Models.MainModels;
+namespace SharedLibrary.Models.DbModels.MainModels;
 
 public class OrderItem
 {
     [Key]
-    public Guid OrderItemId { get; set; }
+    public Guid OrderItemId { get; set; } = Guid.NewGuid();
 
     public uint Quantity { get; set; }
 

@@ -1,23 +1,15 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using SharedLibrary.Models.DbModels.SecondaryModels;
 using SharedLibrary.Models.Enums;
-using SharedLibrary.Models.SecondaryModels;
 
-namespace SharedLibrary.Models.MainModels;
+namespace SharedLibrary.Models.DbModels.MainModels;
 
 public class Order
 {
     [Display(Name = "Order id")] public Guid OrderId { get; set; } = Guid.NewGuid();
 
-    [Display(Name = "Stage")]
-    public OrderProcessingStage OrderProcessingStage
-    {
-        get
-        {
-            return OrderEvents[0]?.Stage ?? throw new Exception("");
-        }
-    } 
-
+    [Display(Name = "Stage")] public OrderProcessingStage ProcessingStage { get; set; } 
     public Guid? AnonymousToken { get; set; }
 
     public decimal SummaryPrice

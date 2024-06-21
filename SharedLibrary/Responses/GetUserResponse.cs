@@ -1,4 +1,5 @@
-using SharedLibrary.Models.MainModels;
+using SharedLibrary.Models.DbModels.MainModels;
+using SharedLibrary.Models.DtoModels.MainModels;
 using SharedLibrary.Responses.Abstract;
 
 namespace SharedLibrary.Responses;
@@ -10,9 +11,9 @@ public class GetUserResponse : ResponseBase
     public GetUserResponse()
     { }
 
-    public GetUserResponse(User? user = null, string? info = null)
+    public GetUserResponse(User? user = null, string? errorInfo = null)
     {
         User = user;
-        Info = info;
+        ErrorInfo = errorInfo;
     }
 }

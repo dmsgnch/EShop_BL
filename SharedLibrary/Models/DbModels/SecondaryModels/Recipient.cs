@@ -1,41 +1,39 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using SharedLibrary.Models.MainModels;
+using SharedLibrary.Models.DbModels.MainModels;
+using SharedLibrary.Models.DtoModels.MainModels;
 
-namespace SharedLibrary.Models.SecondaryModels;
+namespace SharedLibrary.Models.DbModels.SecondaryModels;
 
-public class DeliveryAddress
+public class Recipient
 {
-    [Key]
-    public Guid DeliveryAddressId { get; set; }
+    [Key] public Guid RecipientId { get; set; }
 
-    public string City { get; set; } = "";
-    public string Street { get; set; } = "";
-    public string House { get; set; } = "";
-    public string? Apartment { get; set; } = null;
-    public string? Floor { get; set; } = null;
+    public string Name { get; set; } = "";
+    public string LastName { get; set; } = "";
+    public string? Patronymic { get; set; } = null;
+
+    public string PhoneNumber { get; set; } = "";
 
     #region Constructors
-        
-    public DeliveryAddress()
+
+    public Recipient()
     { }
 
-    public DeliveryAddress(
-        string city, 
-        string street, 
-        string house, 
-        string? apartment = null, 
-        string? floor = null,
+    public Recipient(
+        string name, 
+        string lastName, 
+        string phoneNumber, 
+        string? patronymic = null,
         User? user = null,
-        Order? order = null
-    )
+        Order? order = null)
     {
-        City = city;
-        Street = street;
-        House = house;
-        Apartment = apartment;
-        Floor = floor;
-
+        Name = name;
+        LastName = lastName;
+        Patronymic = patronymic;
+        
+        PhoneNumber = phoneNumber;
+        
         if (order is null && user is null)
         {
             throw new ArgumentException("You must pass the Order or User");
@@ -52,9 +50,9 @@ public class DeliveryAddress
         OrderId = order?.OrderId;
         Order = order;
     }
-        
+    
     #endregion
-        
+
     #region Relationships
 
     //User

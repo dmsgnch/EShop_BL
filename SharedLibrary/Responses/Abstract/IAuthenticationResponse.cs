@@ -1,4 +1,4 @@
-using SharedLibrary.Models.MainModels;
+using SharedLibrary.Models.DtoModels.MainModels;
 
 namespace SharedLibrary.Responses.Abstract;
 

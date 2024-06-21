@@ -1,8 +1,9 @@
 using System.ComponentModel.DataAnnotations;
+using SharedLibrary.Models.DbModels.MainModels;
 using SharedLibrary.Models.Enums;
-using SharedLibrary.Models.MainModels;
+using SharedLibrary.Models.DtoModels.MainModels;
 
-namespace SharedLibrary.Models.SecondaryModels;
+namespace SharedLibrary.Models.DbModels.SecondaryModels;
 
 public class OrderEvent
 {
@@ -23,7 +24,7 @@ public class OrderEvent
         Order = order;
         OrderId = order.OrderId;
         
-        if (!newStage.Equals(OrderProcessingStage.Cart) && (int)Order.OrderProcessingStage <= (int)newStage)
+        if (!newStage.Equals(OrderProcessingStage.Cart) && (int)Order.ProcessingStage <= (int)newStage)
         {
             throw new ArgumentException("New stages cannot precede or coincide with a previous stage!");
         }

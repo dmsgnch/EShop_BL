@@ -4,26 +4,35 @@ public static class ApiRoutesDb
 {
     public static class Controllers
     {
-        public const string DeliveryAddress = "deliveryAddress/";
-        public const string Order = "order/";
-        public const string OrderEvent = "orderEvent/";
-        public const string OrderItem = "orderItem/";
-        public const string Product = "product/";
-        public const string Recipient = "recipient/";
-        public const string Role = "role/";
-        public const string Seller = "seller/";
-        public const string User = "user/";
+        public const string DeliveryAddressContr = "deliveryAddress/";
+        public const string OrderContr = "order/";
+        public const string OrderEventContr = "orderEvent/";
+        public const string OrderItemContr = "orderItem/";
+        public const string ProductContr = "product/";
+        public const string RecipientContr = "recipient/";
+        public const string RoleContr = "role/";
+        public const string SellerContr = "seller/";
+        public const string UserContr = "user/";
     }
     
-    public static class Universal
+    public static class UniversalActions
     {
-        public const string Create = "add";
-        public const string DeleteController = "delete/{id}";
-        public const string Delete = "delete/";
-        public const string Update = "update";
-        public const string GetAll = "getAll";
-        public const string GetByIdController = "GetById/{id}";
-        public const string GetById = "GetById/";
-        
+        public const string CreatePath = "add";
+        public const string DeleteControllerPath = "delete/{id}";
+        public const string DeletePath = "delete/";
+        public const string UpdatePath = "update";
+        public const string GetAllPath = "getAll";
+        public const string GetByIdControllerPath = "GetById/{id}";
+        public const string GetByIdPath = "GetById/";
+
+    }
+    
+    public static class OrderActions
+    {
+        public const string CreatePath = "Create/";
+        public const string AddOrderItemPath = "AddOrderItem/";
+        public const string CreateCartPath = "CreateCart/";
+        public const string CreateOrderPath = "CreateOrder/";
+        public const string GetOrderByIdPath = "GetOrderById/";
     }
 }

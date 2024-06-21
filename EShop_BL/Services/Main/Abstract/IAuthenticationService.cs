@@ -5,6 +5,6 @@ namespace EShop_BL.Services.Main.Abstract;
 
 public interface IAuthenticationService
 {
-    Task<AuthenticationResponse> RegisterAsync(RegisterRequest registerRequest);
-    Task<AuthenticationResponse> LoginAsync(string email, string password);
+    Task<LambdaResponse<string>> RegisterAsync(RegisterRequest registerRequest);
+    Task<LambdaResponse<string>> LoginAsync(string email, string password);
 }

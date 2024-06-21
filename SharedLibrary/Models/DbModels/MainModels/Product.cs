@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SharedLibrary.Models.MainModels;
+namespace SharedLibrary.Models.DbModels.MainModels;
 
 public class Product
 {

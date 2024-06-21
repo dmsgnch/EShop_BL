@@ -1,38 +1,41 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using SharedLibrary.Models.MainModels;
+using SharedLibrary.Models.DbModels.MainModels;
 
-namespace SharedLibrary.Models.SecondaryModels;
+namespace SharedLibrary.Models.DbModels.SecondaryModels;
 
-public class Recipient
+public class DeliveryAddress
 {
-    [Key] public Guid RecipientId { get; set; }
+    [Key]
+    public Guid DeliveryAddressId { get; set; }
 
-    public string Name { get; set; } = "";
-    public string LastName { get; set; } = "";
-    public string? Patronymic { get; set; } = null;
-
-    public string PhoneNumber { get; set; } = "";
+    public string City { get; set; } = "";
+    public string Street { get; set; } = "";
+    public string House { get; set; } = "";
+    public string? Apartment { get; set; } = null;
+    public string? Floor { get; set; } = null;
 
     #region Constructors
-
-    public Recipient()
+        
+    public DeliveryAddress()
     { }
 
-    public Recipient(
-        string name, 
-        string lastName, 
-        string phoneNumber, 
-        string? patronymic = null,
+    public DeliveryAddress(
+        string city, 
+        string street, 
+        string house, 
+        string? apartment = null, 
+        string? floor = null,
         User? user = null,
-        Order? order = null)
+        Order? order = null
+    )
     {
-        Name = name;
-        LastName = lastName;
-        Patronymic = patronymic;
-        
-        PhoneNumber = phoneNumber;
-        
+        City = city;
+        Street = street;
+        House = house;
+        Apartment = apartment;
+        Floor = floor;
+
         if (order is null && user is null)
         {
             throw new ArgumentException("You must pass the Order or User");
@@ -49,9 +52,9 @@ public class Recipient
         OrderId = order?.OrderId;
         Order = order;
     }
-    
+        
     #endregion
-
+        
     #region Relationships
 
     //User

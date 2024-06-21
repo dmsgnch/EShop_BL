@@ -1,5 +1,5 @@
 ﻿
-using SharedLibrary.Models.MainModels;
+using SharedLibrary.Models.DtoModels.MainModels;
 using SharedLibrary.Responses.Abstract;
 
 namespace SharedLibrary.Responses
@@ -12,10 +12,10 @@ namespace SharedLibrary.Responses
 		public AuthenticationResponse()
 		{ }
 
-		public AuthenticationResponse(string? token = null, string? info = null)
+		public AuthenticationResponse(string? token = null, string? errorInfo = null)
 		{
 			Token = token;
-			Info = info;
+			ErrorInfo = errorInfo;
 		}
 	}
 }

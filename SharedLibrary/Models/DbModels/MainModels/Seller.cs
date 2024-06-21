@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace SharedLibrary.Models.MainModels;
+namespace SharedLibrary.Models.DbModels.MainModels;
 
 public class Seller
 {
@@ -18,6 +18,9 @@ public class Seller
     [Display(Name = "Company email")]
     public string EmailAddress { get; set; } = "";
 
+    [Display(Name = "Company description")]
+    public string CompanyDescription { get; set; }
+
     #endregion
 
     #region Optional parameters
@@ -25,9 +28,6 @@ public class Seller
     [Display(Name = "Company picture")]
     public string? ImageUrl { get; set; } = "";
 
-    [Display(Name = "Company description")]
-    public string? CompanyDescription { get; set; } = null;
-    
     [Display(Name = "Addition contact number of the company")]
     public string? AdditionNumber { get; set; } = null;
     
@@ -61,6 +61,9 @@ public class Seller
 
     //Product
     public List<Product>? Products { get; set; } = new();
+    
+    //User
+    public ICollection<User>? Users { get; set; } = new List<User>();
     
     #endregion
 }

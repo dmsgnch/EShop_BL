@@ -9,7 +9,7 @@ using SharedLibrary.Routes;
 namespace EShop_BL.Controllers;
 
 [ApiController]
-[Route(ApiRoutes.Controllers.User)]
+[Route(ApiRoutes.Controllers.UserContr)]
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
@@ -19,7 +19,14 @@ public class UserController : ControllerBase
         _userService = userService;
     }
 
-    [HttpGet(ApiRoutes.User.GetById)]
+    [HttpPut(ApiRoutes.UserActions.EditPath)]
+    public async Task<IActionResult> EditUserAsync([FromBody] EditUserRequest request)
+    {
+        var result = await _userService.EditUserAsync(request);
+        return result.ResponseObject is null ? BadRequest(result) : Ok(result);
+    }
+    
+    [HttpGet(ApiRoutes.UserActions.GetByIdPath)]
     public async Task<IActionResult> GetByIdAsync([FromBody] string userId)
     {
         var result = await _userService.GetUserByIdAsync(userId);
