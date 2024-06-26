@@ -1,4 +1,5 @@
-using SharedLibrary.Models.DbModels.MainModels;
+using SharedLibrary.Models.ClientDtoModels.MainModels;
+using SharedLibrary.Models.DtoModels.MainModels;
 using SharedLibrary.Requests;
 using SharedLibrary.Responses;
 
@@ -6,8 +7,9 @@ namespace EShop_BL.Services.Main.Abstract;
 
 public interface IOrderService
 {
-    public Task<LambdaResponse> AddProductAsync(ProductCartRequest request);
-    public Task<LambdaResponse> DeleteProductAsync(ProductCartRequest request);
-    public Task<LambdaResponse<Order>> GetCartAsync(Guid id);
-    public Task<LambdaResponse<List<Order>>> GetOrdersAsync(Guid id);
+    public Task<UniversalResponse> AddProductAsync(ProductCartRequest request);
+    public Task<UniversalResponse> CreateOrderAsync(Guid userId);
+    public Task<UniversalResponse> DeleteProductAsync(ProductCartRequest request);
+    public Task<UniversalResponse<OrderCDTO>> GetCartAsync(Guid id);
+    public Task<UniversalResponse<List<OrderCDTO>>> GetOrdersAsync(Guid id);
 }

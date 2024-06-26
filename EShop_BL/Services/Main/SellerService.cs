@@ -1,9 +1,10 @@
 using EShop_BL.Components;
+using EShop_BL.Extensions;
 using EShop_BL.Helpers;
 using EShop_BL.Services.Main.Abstract;
 using Newtonsoft.Json;
-using SharedLibrary.Models.DbModels.MainModels;
-using SharedLibrary.Requests;
+using SharedLibrary.Models.ClientDtoModels.MainModels;
+using SharedLibrary.Models.DtoModels.MainModels;
 using SharedLibrary.Responses;
 using SharedLibrary.Routes;
 
@@ -18,135 +19,129 @@ public class SellerService : ISellerService
         _httpClient = httpClientService;
     }
     
-    public async Task<LambdaResponse<Seller>> CreateSellerAsync(EditSellerRequest request)
+    public async Task<UniversalResponse<SellerCDTO>> CreateSellerAsync(SellerCDTO sellerCdto)
     {
-        var seller = new Seller()
-        {
-            SellerId = new Guid(),
-
-            CompanyName = request.CompanyName,
-            ContactNumber = request.ContactNumber,
-            EmailAddress = request.EmailAddress,
-
-            CompanyDescription = request.CompanyDescription,
-            ImageUrl = request.ImageUrl,
-            AdditionNumber = request.AdditionNumber,
-        };
+        var seller = sellerCdto.ToSellerDto();
         
         var userResponse = await _httpClient.SendRequestAsync(new RestRequestForm(
-            ApiRoutesDb.Controllers.SellerContr + ApiRoutesDb.UniversalActions.CreatePath,
-            HttpMethod.Post, jsonData: JsonConvert.SerializeObject(seller)));
+            endPoint: ApiRoutesDb.Controllers.SellerContr + ApiRoutesDb.UniversalActions.CreateAction,
+            requestMethod: HttpMethod.Post, 
+            jsonData: JsonConvert.SerializeObject(seller)));
 
-        return await ResponseHandlerAsync<Seller>(userResponse);
+        var dtoResult = await ResponseHandlerAsync<SellerDTO>(userResponse);
+        return new UniversalResponse<SellerCDTO>(
+            info: dtoResult.Info, errorInfo: dtoResult.ErrorInfo, 
+            responseObject: dtoResult.ResponseObject?.ToSellerCDto());
     }
     
-    public async Task<LambdaResponse> DeleteSellerAsync(Guid id)
+    public async Task<UniversalResponse> DeleteSellerAsync(Guid id)
     {
         var userResponse = await _httpClient.SendRequestAsync(new RestRequestForm(
-            ApiRoutesDb.Controllers.SellerContr + ApiRoutesDb.UniversalActions.DeletePath + id,
-            HttpMethod.Delete));
+            endPoint: ApiRoutesDb.Controllers.SellerContr + ApiRoutesDb.UniversalActions.DeleteAction,
+            requestMethod: HttpMethod.Delete,
+            jsonData: JsonConvert.SerializeObject(id)));
 
         return await EmptyResponseHandlerAsync(userResponse);
     }
     
-    public async Task<LambdaResponse<Seller>> EditSellerAsync(EditSellerRequest request)
+    public async Task<UniversalResponse<SellerCDTO>> EditSellerAsync(SellerCDTO sellerCdto)
     {
-        var seller = new Seller()
-        {
-            SellerId = request.SellerId,
-
-            CompanyName = request.CompanyName,
-            ContactNumber = request.ContactNumber,
-            EmailAddress = request.EmailAddress,
-
-            CompanyDescription = request.CompanyDescription,
-            ImageUrl = request.ImageUrl,
-            AdditionNumber = request.AdditionNumber,
-        };
+        var seller = sellerCdto.ToSellerDto();
         
         var userResponse = await _httpClient.SendRequestAsync(new RestRequestForm(
-            ApiRoutesDb.Controllers.SellerContr + ApiRoutesDb.UniversalActions.UpdatePath,
-            HttpMethod.Put, jsonData: JsonConvert.SerializeObject(seller)));
+            endPoint: ApiRoutesDb.Controllers.SellerContr + ApiRoutesDb.UniversalActions.UpdateAction,
+            requestMethod: HttpMethod.Put, 
+            jsonData: JsonConvert.SerializeObject(seller)));
 
-        return await ResponseHandlerAsync<Seller>(userResponse);
+        var dtoResult = await ResponseHandlerAsync<SellerDTO>(userResponse);
+        return new UniversalResponse<SellerCDTO>(
+            info: dtoResult.Info, errorInfo: dtoResult.ErrorInfo, 
+            responseObject: dtoResult.ResponseObject?.ToSellerCDto());
     }
     
-    public async Task<LambdaResponse<Seller>> GetSellerByIdAsync(Guid id)
+    public async Task<UniversalResponse<SellerCDTO>> GetSellerByIdAsync(Guid id)
     {
         var userResponse = await _httpClient.SendRequestAsync(new RestRequestForm(
-            ApiRoutesDb.Controllers.SellerContr + ApiRoutesDb.UniversalActions.GetByIdPath + id,
-            HttpMethod.Get));
+            endPoint: ApiRoutesDb.Controllers.SellerContr + ApiRoutesDb.UniversalActions.GetByIdAction,
+            requestMethod:HttpMethod.Get,
+            jsonData: JsonConvert.SerializeObject(id)));
 
-        return await ResponseHandlerAsync<Seller>(userResponse);
+        var dtoResult = await ResponseHandlerAsync<SellerDTO>(userResponse);
+        return new UniversalResponse<SellerCDTO>(
+            info: dtoResult.Info, errorInfo: dtoResult.ErrorInfo, 
+            responseObject: dtoResult.ResponseObject?.ToSellerCDto());
     }
 
-    public async Task<LambdaResponse<List<Seller>>> GetAllSellersAsync()
+    public async Task<UniversalResponse<List<SellerCDTO>>> GetAllSellersAsync()
     {
         var userResponse = await _httpClient.SendRequestAsync(new RestRequestForm(
-            ApiRoutesDb.Controllers.SellerContr + ApiRoutesDb.UniversalActions.GetAllPath,
-            HttpMethod.Get));
+            endPoint: ApiRoutesDb.Controllers.SellerContr + ApiRoutesDb.UniversalActions.GetAllAction,
+            requestMethod: HttpMethod.Get));
 
-        return await ResponseHandlerAsync<List<Seller>>(userResponse);
+        var dtoResult = await ResponseHandlerAsync<List<SellerDTO>>(userResponse);
+                return new UniversalResponse<List<SellerCDTO>>(
+                    info: dtoResult.Info, errorInfo: dtoResult.ErrorInfo, 
+                    responseObject: dtoResult.ResponseObject?.Select(p => p.ToSellerCDto()).ToList());
     }
     
-    public async Task<LambdaResponse<string>> GetSellerByUserIdAsync(Guid id)
+    public async Task<UniversalResponse<string>> GetSellerIdByUserIdAsync(Guid id)
     {
+        var getUsersRequest = await _httpClient.SendRequestAsync(new RestRequestForm(
+            endPoint: ApiRoutesDb.Controllers.UserContr + ApiRoutesDb.UniversalActions.GetAllAction,
+            requestMethod: HttpMethod.Get));
+
+        var getUsersResult = await JsonHelper.GetTypeFromResponseAsync<UniversalResponse<List<UserDTO>>>(getUsersRequest);
+
+        if (!getUsersRequest.IsSuccessStatusCode)
+        {
+            return new UniversalResponse<string>(errorInfo: getUsersResult.ErrorInfo);
+        }
+
+        if (getUsersResult.ResponseObject is null) throw new Exception("Response object is null");
+        
+        var sellerId = getUsersResult.ResponseObject.FirstOrDefault(u => u.UserDtoId.Equals(id))?.SellerDtoId;
+        if (sellerId is null) throw new Exception("Seller was not found");
+        
         var response = await _httpClient.SendRequestAsync(new RestRequestForm(
-            ApiRoutesDb.Controllers.UserContr + ApiRoutesDb.UniversalActions.GetAllPath,
-            HttpMethod.Get));
+            endPoint: ApiRoutesDb.Controllers.SellerContr + ApiRoutesDb.UniversalActions.GetByIdAction,
+            requestMethod: HttpMethod.Get,
+            jsonData: JsonConvert.SerializeObject(sellerId)));
 
-        var serverResponse = await JsonHelper.GetTypeFromResponseAsync<LambdaResponse<List<User>>>(response);
+        var serverResponse = await JsonHelper.GetTypeFromResponseAsync<UniversalResponse<string>>(response);
 
         if (!response.IsSuccessStatusCode)
         {
-            return new LambdaResponse<string>(errorInfo: serverResponse.ErrorInfo);
+            return new UniversalResponse<string>(errorInfo: serverResponse.ErrorInfo);
         }
 
         if (serverResponse.ResponseObject is null) throw new Exception("Response object is null");
 
-        var user = serverResponse.ResponseObject.FirstOrDefault(u => u.UserId.Equals(id));
-        
-        if(user is null) throw new Exception("User was not found");
-        
-        var responseSeller = await _httpClient.SendRequestAsync(new RestRequestForm(
-            ApiRoutesDb.Controllers.SellerContr + ApiRoutesDb.UniversalActions.GetByIdPath + user.SellerId,
-            HttpMethod.Get));
-
-        var sellerResponse = await JsonHelper.GetTypeFromResponseAsync<LambdaResponse<Seller>>(responseSeller);
-
-        if (!responseSeller.IsSuccessStatusCode)
-        {
-            return new LambdaResponse<string>(errorInfo: sellerResponse.ErrorInfo);
-        }
-
-        if (sellerResponse.ResponseObject is null) throw new Exception("Response object is null");
-
-        return new LambdaResponse<string>(responseObject: sellerResponse.ResponseObject.SellerId.ToString(), info: serverResponse.Info);
+        return new UniversalResponse<string>(responseObject: serverResponse.ResponseObject, info: serverResponse.Info);
     }
     
-    private async Task<LambdaResponse<T>> ResponseHandlerAsync<T>(HttpResponseMessage response) where T : class
+    private async Task<UniversalResponse<T>> ResponseHandlerAsync<T>(HttpResponseMessage response) where T : class
     {
-        var serverResponse = await JsonHelper.GetTypeFromResponseAsync<LambdaResponse<T>>(response);
+        var serverResponse = await JsonHelper.GetTypeFromResponseAsync<UniversalResponse<T>>(response);
 
         if (!response.IsSuccessStatusCode)
         {
-            return new LambdaResponse<T>(errorInfo: serverResponse.ErrorInfo);
+            return new UniversalResponse<T>(errorInfo: serverResponse.ErrorInfo);
         }
 
         if (serverResponse.ResponseObject is null) throw new Exception("Response object is null");
 
-        return new LambdaResponse<T>(responseObject: serverResponse.ResponseObject as T, info: serverResponse.Info);
+        return new UniversalResponse<T>(responseObject: serverResponse.ResponseObject as T, info: serverResponse.Info);
     }
     
-    private async Task<LambdaResponse> EmptyResponseHandlerAsync(HttpResponseMessage response)
+    private async Task<UniversalResponse> EmptyResponseHandlerAsync(HttpResponseMessage response)
     {
-        var serverResponse = await JsonHelper.GetTypeFromResponseAsync<LambdaResponse>(response);
+        var serverResponse = await JsonHelper.GetTypeFromResponseAsync<UniversalResponse>(response);
 
         if (!response.IsSuccessStatusCode)
         {
-            return new LambdaResponse(errorInfo: serverResponse.ErrorInfo);
+            return new UniversalResponse(errorInfo: serverResponse.ErrorInfo);
         }
 
-        return new LambdaResponse(info: serverResponse.Info);
+        return new UniversalResponse(info: serverResponse.Info);
     }
 }

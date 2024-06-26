@@ -2,30 +2,30 @@ using SharedLibrary.Responses.Abstract;
 
 namespace SharedLibrary.Responses;
 
-public class LambdaResponse : ResponseBase
+public class UniversalResponse : ResponseBase
 {
-    public LambdaResponse()
+    public UniversalResponse()
     {
         
     }
     
-    public LambdaResponse(string? errorInfo = null, string? info = null)
+    public UniversalResponse(string? errorInfo = null, string? info = null)
     {
         Info = info;
         ErrorInfo = errorInfo;
     }
 }
 
-public class LambdaResponse<T> : ResponseBase where T: class
+public class UniversalResponse<T> : ResponseBase where T: class
 {
     public T? ResponseObject { get; set; }
 
-    public LambdaResponse()
+    public UniversalResponse()
     {
         
     }
     
-    public LambdaResponse(string? errorInfo = null, string? info = null, T? responseObject = null)
+    public UniversalResponse(string? errorInfo = null, string? info = null, T? responseObject = null)
     {
         Info = info;
         ErrorInfo = errorInfo;

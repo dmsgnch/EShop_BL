@@ -8,29 +8,13 @@ public class OrderItemDTO
     [Key]
     public Guid OrderItemDtoId { get; set; } = Guid.NewGuid();
     public uint Quantity { get; set; }
-
-    public decimal SummaryItemPrice
-    {
-        get
-        {
-            decimal pricePerUnit = (decimal)(ProductDto?.PricePerUnit ??
-                                              throw new InvalidOperationException());
-
-            return pricePerUnit * Quantity;
-        }
-    }
     
     #region Constructors
 
-    public OrderItemDTO(OrderDTO orderDto, ProductDTO productDto, uint quantity = 1)
+    public OrderItemDTO(Guid orderDtoId, Guid productDtoId, uint quantity = 1)
     {
-        OrderDtoId = orderDto.OrderDtoId;
-        OrderDto = orderDto;
-        
-        OrderItemDtoId = Guid.NewGuid();
-
-        ProductDtoId = productDto.ProductDtoId;
-        ProductDto = productDto;
+        OrderDtoId = orderDtoId;
+        ProductDtoId = productDtoId;
 
         Quantity = quantity;
     }

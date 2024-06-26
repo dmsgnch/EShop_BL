@@ -17,22 +17,17 @@ public static class ApiRoutesDb
     
     public static class UniversalActions
     {
-        public const string CreatePath = "add";
-        public const string DeleteControllerPath = "delete/{id}";
-        public const string DeletePath = "delete/";
-        public const string UpdatePath = "update";
-        public const string GetAllPath = "getAll";
-        public const string GetByIdControllerPath = "GetById/{id}";
-        public const string GetByIdPath = "GetById/";
+        public const string CreateAction = "add";
+        public const string DeleteAction = "delete/";
+        public const string UpdateAction = "update";
+        public const string GetAllAction = "getAll";
+        public const string GetByIdAction = "GetById/";
 
     }
     
     public static class OrderActions
     {
-        public const string CreatePath = "Create/";
-        public const string AddOrderItemPath = "AddOrderItem/";
-        public const string CreateCartPath = "CreateCart/";
-        public const string CreateOrderPath = "CreateOrder/";
-        public const string GetOrderByIdPath = "GetOrderById/";
+        public const string CreateCartAction = "CreateCartOrder/";
+        public const string CreateOrderAction = "CreateOrder/";
     }
 }

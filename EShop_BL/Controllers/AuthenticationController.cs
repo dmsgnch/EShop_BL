@@ -18,14 +18,14 @@ public class AuthenticationController : ControllerBase
         _authenticationService = authService;
     }
 
-    [HttpPost(ApiRoutes.AuthenticationActions.RegisterPath)]
+    [HttpPost(ApiRoutes.AuthenticationActions.RegisterAction)]
     public async Task<IActionResult> RegisterAsync([FromBody] RegisterRequest regRequest)
     {
         var result = await _authenticationService.RegisterAsync(regRequest);
         return result.ResponseObject is null ? BadRequest(result) : Ok(result);
     }
 
-    [HttpPost(ApiRoutes.AuthenticationActions.LoginPath)]
+    [HttpPost(ApiRoutes.AuthenticationActions.LoginAction)]
     public async Task<IActionResult> LoginAsync([FromBody] LoginRequest request)
     {
         var result = await _authenticationService.LoginAsync(request.Email, request.Password);

@@ -1,8 +1,10 @@
 using EShop_BL.Components;
+using EShop_BL.Extensions;
 using EShop_BL.Helpers;
 using EShop_BL.Services.Main.Abstract;
 using Newtonsoft.Json;
-using SharedLibrary.Models.DbModels.MainModels;
+using SharedLibrary.Models.ClientDtoModels.MainModels;
+using SharedLibrary.Models.DtoModels.MainModels;
 using SharedLibrary.Requests;
 using SharedLibrary.Responses;
 using SharedLibrary.Routes;
@@ -22,61 +24,43 @@ public class UserService : IUserService
         _hashProvider = hashProvider;
     }
 
-    public async Task<LambdaResponse<User>> EditUserAsync(EditUserRequest request)
+    public async Task<UniversalResponse<UserCDTO>> EditUserAsync(UserCDTO userCDto)
     {
-        var user = new User()
+        var user = userCDto.ToUserDto();
+        if (!String.IsNullOrEmpty(user.PasswordHash))
         {
-            UserId = request.UserId,
-
-            Name = request.Name,
-            LastName = request.LastName,
-            Patronymic = request.Patronymic,
-
-            Email = request.Email,
-            PhoneNumber = request.PhoneNumber,
-
-            RoleId = request.RoleId,
-            SellerId = request.SellerId,
-        };
-
-        if (!String.IsNullOrEmpty(request.Password))
-        {
-            user.PasswordHash = request.Password;
             user.ProvideSaltAndHash(_hashProvider);
         }
-        else
-        {
-            user.PasswordHash = "";
-            user.Salt = "";
-        }
 
         var userResponse = await _httpClient.SendRequestAsync(new RestRequestForm(
-            ApiRoutesDb.Controllers.UserContr + ApiRoutesDb.UniversalActions.UpdatePath,
-            HttpMethod.Put, jsonData: JsonConvert.SerializeObject(user)));
+            endPoint: ApiRoutesDb.Controllers.UserContr + ApiRoutesDb.UniversalActions.UpdateAction,
+            requestMethod: HttpMethod.Put, 
+            jsonData: JsonConvert.SerializeObject(user)));
 
         return await ResponseHandlerAsync(userResponse);
     }
 
-    public async Task<LambdaResponse<User>> GetUserByIdAsync(string userId)
+    public async Task<UniversalResponse<UserCDTO>> GetUserByIdAsync(Guid userId)
     {
         var userResponse = await _httpClient.SendRequestAsync(new RestRequestForm(
-            ApiRoutesDb.Controllers.UserContr + ApiRoutesDb.UniversalActions.GetByIdPath + userId,
-            HttpMethod.Get));
+            endPoint: ApiRoutesDb.Controllers.UserContr + ApiRoutesDb.UniversalActions.GetByIdAction,
+            requestMethod: HttpMethod.Get,
+            jsonData: JsonConvert.SerializeObject(userId)));
 
         return await ResponseHandlerAsync(userResponse);
     }
 
-    private async Task<LambdaResponse<User>> ResponseHandlerAsync(HttpResponseMessage response)
+    private async Task<UniversalResponse<UserCDTO>> ResponseHandlerAsync(HttpResponseMessage response)
     {
-        var serverResponse = await JsonHelper.GetTypeFromResponseAsync<LambdaResponse<User>>(response);
+        var serverResponse = await JsonHelper.GetTypeFromResponseAsync<UniversalResponse<UserDTO>>(response);
 
         if (!response.IsSuccessStatusCode)
         {
-            return new LambdaResponse<User>(errorInfo: serverResponse.ErrorInfo);
+            return new UniversalResponse<UserCDTO>(errorInfo: serverResponse.ErrorInfo);
         }
 
         if (serverResponse.ResponseObject is null) throw new Exception("Response object is null");
 
-        return new LambdaResponse<User>(responseObject: serverResponse.ResponseObject, info: serverResponse.Info);
+        return new UniversalResponse<UserCDTO>(responseObject: serverResponse.ResponseObject.ToUserCDto(), info: serverResponse.Info);
     }
 }

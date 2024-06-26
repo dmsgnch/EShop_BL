@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using EShop_BL.Services.Main.Abstract;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using SharedLibrary.Models.ClientDtoModels.MainModels;
 using SharedLibrary.Requests;
 using SharedLibrary.Responses;
 using SharedLibrary.Routes;
@@ -19,15 +20,15 @@ public class UserController : ControllerBase
         _userService = userService;
     }
 
-    [HttpPut(ApiRoutes.UserActions.EditPath)]
-    public async Task<IActionResult> EditUserAsync([FromBody] EditUserRequest request)
+    [HttpPut(ApiRoutes.UniversalActions.EditAction)]
+    public async Task<IActionResult> EditUserAsync([FromBody] UserCDTO userCDto)
     {
-        var result = await _userService.EditUserAsync(request);
+        var result = await _userService.EditUserAsync(userCDto);
         return result.ResponseObject is null ? BadRequest(result) : Ok(result);
     }
     
-    [HttpGet(ApiRoutes.UserActions.GetByIdPath)]
-    public async Task<IActionResult> GetByIdAsync([FromBody] string userId)
+    [HttpGet(ApiRoutes.UniversalActions.GetByIdAction)]
+    public async Task<IActionResult> GetByIdAsync([FromBody] Guid userId)
     {
         var result = await _userService.GetUserByIdAsync(userId);
         return result.ResponseObject is null ? BadRequest(result) : Ok(result);

@@ -1,10 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace SharedLibrary.Models.DtoModels.MainModels;
+namespace SharedLibrary.Models.ClientDtoModels.MainModels;
 
-public class SellerDTO
+public class SellerCDTO
 {
-    public Guid SellerDtoId { get; set; } = Guid.NewGuid();
+    public Guid SellerCDtoId { get; set; } = Guid.NewGuid();
     
     public string CompanyName { get; set; }
     public string ContactNumber { get; set; }
@@ -14,7 +14,7 @@ public class SellerDTO
     public string? ImageUrl { get; set; }
     public string? AdditionNumber { get; set; }
 
-    public SellerDTO(
+    public SellerCDTO(
         string companyName,
         string contactNumber,
         string emailAddress,
@@ -34,10 +34,10 @@ public class SellerDTO
     #region Relationships
 
     //Product
-    public List<ProductDTO>? ProductsDto { get; set; }
+    public List<ProductCDTO>? ProductsCDto { get; set; }
     
     //User
-    public List<UserDTO>? UsersDto { get; set; }
+    public List<UserCDTO>? UsersCDto { get; set; }
     
     #endregion
 }

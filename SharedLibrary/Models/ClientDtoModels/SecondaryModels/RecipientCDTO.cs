@@ -1,20 +1,19 @@
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using SharedLibrary.Models.DtoModels.MainModels;
+using SharedLibrary.Models.ClientDtoModels.MainModels;
 
-namespace SharedLibrary.Models.DtoModels.SecondaryModels;
+namespace SharedLibrary.Models.ClientDtoModels.SecondaryModels;
 
-public class RecipientDTO
+public class RecipientCDTO
 {
-    [Key] public Guid RecipientDtoId { get; set; }
+    [Key] public Guid RecipientCDtoId { get; set; }
 
-    public string Name { get; set; }
-    public string LastName { get; set; }
-    public string? Patronymic { get; set; }
+    public string Name { get; set; } = "";
+    public string LastName { get; set; } = "";
+    public string? Patronymic { get; set; } = null;
 
-    public string PhoneNumber { get; set; }
-
-    public RecipientDTO(
+    public string PhoneNumber { get; set; } = "";
+    
+    public RecipientCDTO(
         string name,
         string lastName,
         string phoneNumber,
@@ -38,19 +37,19 @@ public class RecipientDTO
             throw new ArgumentException("You cant pass Order and User at the same time");
         }
 
-        UserDtoId = userId;
-        OrderDtoId = orderId;
+        UserCDtoId = userId;
+        OrderCDtoId = orderId;
     }
 
     #region Relationships
 
     //User
-    public Guid? UserDtoId { get; set; }
-    public UserDTO? UserDto { get; set; }
+    public Guid? UserCDtoId { get; set; }
+    public UserCDTO? UserCDto { get; set; }
 
     //Order
-    public Guid? OrderDtoId { get; set; }
-    public OrderDTO? OrderDto { get; set; }
+    public Guid? OrderCDtoId { get; set; }
+    public OrderCDTO? OrderCDto { get; set; }
     
     #endregion
 }

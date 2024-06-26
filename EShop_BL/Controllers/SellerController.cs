@@ -1,5 +1,6 @@
 using EShop_BL.Services.Main.Abstract;
 using Microsoft.AspNetCore.Mvc;
+using SharedLibrary.Models.ClientDtoModels.MainModels;
 using SharedLibrary.Requests;
 using SharedLibrary.Routes;
 
@@ -16,45 +17,45 @@ public class SellerController : ControllerBase
         _sellerService = sellerService;
     }
     
-    [HttpPost(ApiRoutes.SellerActions.CreatePath)]
-    public async Task<IActionResult> CreateSeller([FromBody]EditSellerRequest request)
+    [HttpPost(ApiRoutes.UniversalActions.CreateAction)]
+    public async Task<IActionResult> CreateSeller([FromBody]SellerCDTO sellerCdto)
     {
-        var result = await _sellerService.CreateSellerAsync(request);
+        var result = await _sellerService.CreateSellerAsync(sellerCdto);
         return result.ResponseObject is null ? BadRequest(result) : Ok(result);
     }
     
-    [HttpDelete(ApiRoutes.SellerActions.DeletePath)]
+    [HttpDelete(ApiRoutes.UniversalActions.DeleteAction)]
     public async Task<IActionResult> DeleteSeller([FromBody]Guid id)
     {
         var result = await _sellerService.DeleteSellerAsync(id);
         return result.Info is null ? BadRequest(result) : Ok(result);
     }
     
-    [HttpPut(ApiRoutes.SellerActions.EditPath)]
-    public async Task<IActionResult> EditSeller([FromBody]EditSellerRequest request)
+    [HttpPut(ApiRoutes.UniversalActions.EditAction)]
+    public async Task<IActionResult> EditSeller([FromBody]SellerCDTO sellerCdto)
     {
-        var result = await _sellerService.EditSellerAsync(request);
+        var result = await _sellerService.EditSellerAsync(sellerCdto);
         return result.ResponseObject is null ? BadRequest(result) : Ok(result);
     }
     
-    [HttpGet(ApiRoutes.SellerActions.GetByIdPath)]
+    [HttpGet(ApiRoutes.UniversalActions.GetByIdAction)]
     public async Task<IActionResult> GetSellerById([FromBody]Guid id)
     {
         var result = await _sellerService.GetSellerByIdAsync(id);
         return result.ResponseObject is null ? BadRequest(result) : Ok(result);
     }
     
-    [HttpGet(ApiRoutes.SellerActions.GetAllPath)]
+    [HttpGet(ApiRoutes.UniversalActions.GetAllAction)]
     public async Task<IActionResult> GetAllSellers()
     {
         var result = await _sellerService.GetAllSellersAsync();
         return result.ResponseObject is null ? BadRequest(result) : Ok(result);
     }
     
-    [HttpGet(ApiRoutes.SellerActions.GetSellerIdByUserIdPath)]
+    [HttpGet(ApiRoutes.SellerActions.GetSellerIdByUserIdAction)]
     public async Task<IActionResult> GetSellerByUserId([FromBody]Guid id)
     {
-        var result = await _sellerService.GetSellerByUserIdAsync(id);
+        var result = await _sellerService.GetSellerIdByUserIdAsync(id);
         return result.ResponseObject is null ? BadRequest(result) : Ok(result);
     }
 }

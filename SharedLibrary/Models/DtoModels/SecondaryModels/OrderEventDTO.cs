@@ -13,15 +13,9 @@ public class OrderEventDTO
     
     public OrderProcessingStage Stage { get; set; }
 
-    public OrderEventDTO(OrderDTO order, OrderProcessingStage newStage = OrderProcessingStage.Cart)
+    public OrderEventDTO(Guid orderId, OrderProcessingStage newStage = OrderProcessingStage.Cart)
     {
-        OrderDto = order;
-        OrderDtoId = order.OrderDtoId;
-        
-        if (!newStage.Equals(OrderProcessingStage.Cart) && (int)OrderDto.ProcessingStage <= (int)newStage)
-        {
-            throw new ArgumentException("New stages cannot precede or coincide with a previous stage!");
-        }
+        OrderDtoId = orderId;
 
         EventTime = DateTime.Now;
         Stage = newStage;

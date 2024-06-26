@@ -8,8 +8,6 @@ public class RoleDTO
     public int RoleDtoId { get; set; }
     
     public RoleTag RoleTag { get; set; }
-    
-    #region Constructors
 
     public RoleDTO(RoleTag roleTag)
     {
@@ -17,8 +15,6 @@ public class RoleDTO
         
         RoleTag = roleTag;
     }
-    
-    #endregion
     
     #region Relationships
     

@@ -1,10 +1,10 @@
-using SharedLibrary.Models.DtoModels.MainModels;
+using SharedLibrary.Models.ClientDtoModels.MainModels;
 
-namespace SharedLibrary.Models.DtoModels.SecondaryModels;
+namespace SharedLibrary.Models.ClientDtoModels.SecondaryModels;
 
-public class DeliveryAddressDTO
+public class DeliveryAddressCDTO
 {
-    public Guid DeliveryAddressDtoId { get; set; }
+    public Guid DeliveryAddressCDtoId { get; set; }
 
     public string City { get; set; }
     public string Street { get; set; }
@@ -14,7 +14,7 @@ public class DeliveryAddressDTO
 
     #region Constructors
 
-    public DeliveryAddressDTO(
+    public DeliveryAddressCDTO(
         string city, 
         string street, 
         string house, 
@@ -40,8 +40,8 @@ public class DeliveryAddressDTO
             throw new ArgumentException("You cant pass Order and User at the same time");
         }
 
-        UserDtoId = userDtoId;
-        OrderDtoId = orderDtoId;
+        UserCDtoId = userDtoId;
+        OrderCDtoId = orderDtoId;
     }
         
     #endregion
@@ -49,12 +49,12 @@ public class DeliveryAddressDTO
     #region Relationships
 
     //User
-    public Guid? UserDtoId { get; set; }
-    public UserDTO? UserDto { get; set; }
+    public Guid? UserCDtoId { get; set; }
+    public UserCDTO? UserCDto { get; set; }
 
     //Order
-    public Guid? OrderDtoId { get; set; }
-    public OrderDTO? OrderDto { get; set; }
+    public Guid? OrderCDtoId { get; set; }
+    public OrderCDTO? OrderCDto { get; set; }
     
     #endregion
 }

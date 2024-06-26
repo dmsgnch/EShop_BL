@@ -1,8 +1,8 @@
-namespace SharedLibrary.Models.DtoModels.MainModels;
+namespace SharedLibrary.Models.ClientDtoModels.MainModels;
 
-public class ProductDTO
+public class ProductCDTO
 {
-    public Guid ProductDtoId { get; set; }
+    public Guid ProductCDtoId { get; set; }
 
     public string? ImageUrl { get; set; }
 
@@ -12,13 +12,11 @@ public class ProductDTO
     public int WeightInGrams { get; set; }
     public int? InStock { get; set; }
     
-    #region Constructors
-
-    public ProductDTO(
+    public ProductCDTO(
         string name, 
         string description, 
         decimal pricePerUnit, 
-        int weightInGrams,
+        int weightInGrams, 
         Guid sellerId,
         string? imageUrl = null)
     {
@@ -28,19 +26,18 @@ public class ProductDTO
         WeightInGrams = weightInGrams;
 
         ImageUrl = imageUrl;
-
-        SellerDtoId = sellerId; }
-    
-    #endregion
+        
+        SellerCDtoId = sellerId;
+    }
 
     #region Relationships
     
     //Seller
-    public Guid SellerDtoId { get; set; }
-    public SellerDTO? SellerDto { get; set; }
+    public Guid SellerCDtoId { get; set; }
+    public SellerCDTO? SellerCDto { get; set; }
     
     //CartItem
-    public List<OrderItemDTO>? OrderItemsDto { get; set; } = new();
+    public List<OrderItemCDTO>? OrderItemsCDto { get; set; } = new();
 
     #endregion
 }

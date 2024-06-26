@@ -1,15 +1,14 @@
-using SharedLibrary.Models.DbModels.MainModels;
-using SharedLibrary.Requests;
+using SharedLibrary.Models.ClientDtoModels.MainModels;
 using SharedLibrary.Responses;
 
 namespace EShop_BL.Services.Main.Abstract;
 
 public interface IProductService
 {
-    public Task<LambdaResponse<Product>> CreateProductAsync(EditProductRequest request);
-    public Task<LambdaResponse> DeleteProductAsync(Guid id);
-    public Task<LambdaResponse<Product>> EditProductAsync(EditProductRequest request);
-    public Task<LambdaResponse<Product>> GetProductByIdAsync(Guid id);
-    public Task<LambdaResponse<List<Product>>> GetAllProductsAsync();
-    public Task<LambdaResponse<List<Product>>> GetAllProductsBySellerIdAsync(Guid id);
+    public Task<UniversalResponse<ProductCDTO>> CreateProductAsync(ProductCDTO productCDto);
+    public Task<UniversalResponse> DeleteProductAsync(Guid id);
+    public Task<UniversalResponse<ProductCDTO>> EditProductAsync(ProductCDTO productCDto);
+    public Task<UniversalResponse<ProductCDTO>> GetProductByIdAsync(Guid id);
+    public Task<UniversalResponse<List<ProductCDTO>>> GetAllProductsAsync();
+    public Task<UniversalResponse<List<ProductCDTO>>> GetAllProductsBySellerIdAsync(Guid id);
 }

@@ -1,11 +1,10 @@
-using SharedLibrary.Models.DbModels.MainModels;
-using SharedLibrary.Requests;
+using SharedLibrary.Models.ClientDtoModels.MainModels;
 using SharedLibrary.Responses;
 
 namespace EShop_BL.Services.Main.Abstract;
 
 public interface IUserService
 {
-    public Task<LambdaResponse<User>> EditUserAsync(EditUserRequest request);
-    public Task<LambdaResponse<User>> GetUserByIdAsync(string userId);
+    public Task<UniversalResponse<UserCDTO>> EditUserAsync(UserCDTO userCDto);
+    public Task<UniversalResponse<UserCDTO>> GetUserByIdAsync(Guid userId);
 }

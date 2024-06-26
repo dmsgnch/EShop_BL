@@ -210,6 +210,9 @@
         }
       },
       "SharedLibrary/1.0.0": {
+        "dependencies": {
+          "Microsoft.AspNetCore.Mvc.NewtonsoftJson": "8.0.6"
+        },
         "runtime": {
           "SharedLibrary.dll": {}
         }

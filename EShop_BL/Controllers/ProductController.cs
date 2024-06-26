@@ -1,5 +1,7 @@
 using EShop_BL.Services.Main.Abstract;
 using Microsoft.AspNetCore.Mvc;
+using SharedLibrary.Models.ClientDtoModels.MainModels;
+using SharedLibrary.Models.DtoModels.MainModels;
 using SharedLibrary.Requests;
 using SharedLibrary.Routes;
 
@@ -16,42 +18,42 @@ public class ProductController : ControllerBase
         _productService = productService;
     }
     
-    [HttpPost(ApiRoutes.ProductActions.CreatePath)]
-    public async Task<IActionResult> CreateProduct([FromBody]EditProductRequest request)
+    [HttpPost(ApiRoutes.UniversalActions.CreateAction)]
+    public async Task<IActionResult> CreateProduct([FromBody]ProductCDTO productCDto)
     {
-        var result = await _productService.CreateProductAsync(request);
+        var result = await _productService.CreateProductAsync(productCDto);
         return result.ResponseObject is null ? BadRequest(result) : Ok(result);
     }
     
-    [HttpDelete(ApiRoutes.ProductActions.DeletePath)]
+    [HttpDelete(ApiRoutes.UniversalActions.DeleteAction)]
     public async Task<IActionResult> DeleteProduct([FromBody]Guid id)
     {
         var result = await _productService.DeleteProductAsync(id);
         return result.Info is null ? BadRequest(result) : Ok(result);
     }
     
-    [HttpPut(ApiRoutes.ProductActions.EditPath)]
-    public async Task<IActionResult> EditProduct([FromBody]EditProductRequest request)
+    [HttpPut(ApiRoutes.UniversalActions.EditAction)]
+    public async Task<IActionResult> EditProduct([FromBody]ProductCDTO productCDto)
     {
-        var result = await _productService.EditProductAsync(request);
+        var result = await _productService.EditProductAsync(productCDto);
         return result.ResponseObject is null ? BadRequest(result) : Ok(result);
     }
     
-    [HttpGet(ApiRoutes.ProductActions.GetByIdPath)]
+    [HttpGet(ApiRoutes.UniversalActions.GetByIdAction)]
     public async Task<IActionResult> GetProductById([FromBody]Guid id)
     {
         var result = await _productService.GetProductByIdAsync(id);
         return result.ResponseObject is null ? BadRequest(result) : Ok(result);
     }
     
-    [HttpGet(ApiRoutes.ProductActions.GetAllPath)]
+    [HttpGet(ApiRoutes.UniversalActions.GetAllAction)]
     public async Task<IActionResult> GetAllProducts()
     {
         var result = await _productService.GetAllProductsAsync();
         return result.ResponseObject is null ? BadRequest(result) : Ok(result);
     }
     
-    [HttpGet(ApiRoutes.ProductActions.GetAllBySellerIdPath)]
+    [HttpGet(ApiRoutes.ProductActions.GetAllProductsBySellerIdAction)]
     public async Task<IActionResult> GetAllProductsBySellerId([FromBody]Guid id)
     {
         var result = await _productService.GetAllProductsBySellerIdAsync(id);

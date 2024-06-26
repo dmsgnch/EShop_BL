@@ -15,60 +15,35 @@ public static class ApiRoutes
 
     public static class AuthenticationActions
     {
-        public const string RegisterPath = "reg";
-        public const string LoginPath = "login";
+        public const string RegisterAction = "reg";
+        public const string LoginAction = "login";
     }
-    
-    public static class UserActions
+
+    public static class UniversalActions
     {
-        public const string CreatePath = "create";
-        public const string DeletePath = "delete/";
-        public const string EditPath = "edit";
-        public const string GetByIdPath = "GetById/";
-        public const string GetAllPath = "GetAll";
+        public const string CreateAction = "create";
+        public const string DeleteAction = "delete/";
+        public const string EditAction = "edit";
+        public const string GetByIdAction = "GetById/";
+        public const string GetAllAction = "GetAll";
     }
-    
-    public static class SellerActions
-    {
-        public const string CreatePath = "create";
-        public const string DeletePath = "delete/";
-        public const string EditPath = "edit";
-        public const string GetByIdPath = "GetById/";
-        public const string GetAllPath = "GetAll";
-        public const string GetSellerIdByUserIdPath = "GetByUserId/";
-    }
-    
+
     public static class ProductActions
     {
-        public const string CreatePath = "create";
-        public const string DeletePath = "delete/";
-        public const string EditPath = "edit";
-        public const string GetByIdPath = "GetById/";
-        public const string GetAllPath = "GetAll";
-        public const string GetAllBySellerIdPath = "GetAllBySellerId";
+        public const string GetAllProductsBySellerIdAction = "GetAllBySellerId";
     }
     
     public static class OrderActions
     {
-        public const string GetOrdersPath = "GetOrders";
-        public const string GetCartPath = "GetCart";
-        public const string AddProductPath = "AddProduct";
-        public const string DeleteProductPath = "DeleteProduct";
+        public const string GetAllOrdersNotCartAction = "GetOrders";
+        public const string CreateOrder = "CreateOrder";
+        public const string GetCartOrderAction = "GetCart";
+        public const string AddProductToCartOrderAction = "AddProduct";
+        public const string DeleteProductFromCartOrderAction = "DeleteProduct";
     }
-    
-    public static class OrderItemActions
+
+    public static class SellerActions
     {
-        public const string CreatePath = "create";
-        public const string DeletePath = "delete/";
-        public const string GetByIdPath = "GetById/";
-        public const string GetAllPath = "GetAll";
-    }
-    
-    public static class OrderEventActions
-    {
-        public const string CreatePath = "create";
-        public const string DeletePath = "delete/";
-        public const string GetByIdPath = "GetById/";
-        public const string GetAllPath = "GetAll";
+        public const string GetSellerIdByUserIdAction = "GetSellerIdByUserId";
     }
 }

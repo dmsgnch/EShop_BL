@@ -10,28 +10,21 @@ public class UserDTO
     public string LastName { get; set; }
     public string? Patronymic { get; set; }
     
-    public string PasswordHash { get; set; }
-    public string Salt { get; set; }
+    public string? PasswordHash { get; set; }
+    public string? Salt { get; set; }
     
     public string Email { get; set; }
     public string PhoneNumber { get; set; }
 
-    #region Constructors
-    
     public UserDTO(
         string name, 
-        string lastName, 
-        string passwordHash,
-        string salt,
+        string lastName,
         string phoneNumber, 
-        string email, 
-        RoleDTO? role = null, 
+        string email,
         string? patronymic = null,
-        string? anonymousToken = null)
+        string? passwordHash = null,
+        string? salt = null)
     {
-        RoleDtoId = role?.RoleDtoId ?? 1;
-        RoleDto = role;
-        
         Name = name;
         LastName = lastName;
         Patronymic = patronymic;
@@ -41,18 +34,7 @@ public class UserDTO
         
         Email = email;
         PhoneNumber = phoneNumber;
-
-        if (anonymousToken is not null)
-        {
-            Guid.TryParse(anonymousToken, out Guid result);
-        
-            UserDtoId = result.Equals(Guid.Empty) ? 
-                throw new ArgumentException($"Anonymous Token: {anonymousToken}, parsed incorrect") : 
-                result;
-        }
     }
-    
-    #endregion
 
     #region Relationships
 
@@ -65,7 +47,7 @@ public class UserDTO
     public SellerDTO? SellerDto { get; set; }
     
     //Order
-    public List<OrderDTO> OrdersDto { get; set; } = new();
+    public List<OrderDTO>? OrdersDto { get; set; }
 
     //Recipient
     public RecipientDTO? RecipientDto { get; set; }

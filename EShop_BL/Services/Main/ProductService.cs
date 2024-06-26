@@ -1,9 +1,10 @@
 using EShop_BL.Components;
+using EShop_BL.Extensions;
 using EShop_BL.Helpers;
 using EShop_BL.Services.Main.Abstract;
 using Newtonsoft.Json;
-using SharedLibrary.Models.DbModels.MainModels;
-using SharedLibrary.Requests;
+using SharedLibrary.Models.ClientDtoModels.MainModels;
+using SharedLibrary.Models.DtoModels.MainModels;
 using SharedLibrary.Responses;
 using SharedLibrary.Routes;
 
@@ -18,137 +19,114 @@ public class ProductService : IProductService
         _httpClient = httpClientService;
     }
     
-    public async Task<LambdaResponse<Product>> CreateProductAsync(EditProductRequest request)
+    public async Task<UniversalResponse<ProductCDTO>> CreateProductAsync(ProductCDTO productCDto)
     {
-        var product = new Product()
-        {
-            ProductId = new Guid(),
-
-            Name = request.Name,
-            WeightInGrams = request.WeightInGrams,
-            PricePerUnit = request.PricePerUnit,
-
-            Description = request.Description,
-            ImageUrl = request.ImageUrl,
-            InStock = request.InStock ?? 1,
-            
-            SellerId = request.SellerId,
-        };
+        var product = productCDto.ToProductDto();
         
         var productResponse = await _httpClient.SendRequestAsync(new RestRequestForm(
-            ApiRoutesDb.Controllers.ProductContr + ApiRoutesDb.UniversalActions.CreatePath,
-            HttpMethod.Post, jsonData: JsonConvert.SerializeObject(product)));
+            endPoint: ApiRoutesDb.Controllers.ProductContr + ApiRoutesDb.UniversalActions.CreateAction,
+            requestMethod:HttpMethod.Post, 
+            jsonData: JsonConvert.SerializeObject(product)));
 
-        return await ResponseHandlerAsync<Product>(productResponse);
+        var dtoResult = await ResponseHandlerAsync<ProductDTO>(productResponse);
+        return new UniversalResponse<ProductCDTO>(
+            info: dtoResult.Info, errorInfo: dtoResult.ErrorInfo, 
+            responseObject: dtoResult.ResponseObject?.ToProductCDto());
     }
     
-    public async Task<LambdaResponse> DeleteProductAsync(Guid id)
+    public async Task<UniversalResponse> DeleteProductAsync(Guid id)
     {
         var productResponse = await _httpClient.SendRequestAsync(new RestRequestForm(
-            ApiRoutesDb.Controllers.ProductContr + ApiRoutesDb.UniversalActions.DeletePath + id,
-            HttpMethod.Delete));
+            endPoint: ApiRoutesDb.Controllers.ProductContr + ApiRoutesDb.UniversalActions.DeleteAction,
+            requestMethod: HttpMethod.Delete,
+            jsonData: JsonConvert.SerializeObject(id)));
 
         return await EmptyResponseHandlerAsync(productResponse);
     }
     
-    public async Task<LambdaResponse<Product>> EditProductAsync(EditProductRequest request)
+    public async Task<UniversalResponse<ProductCDTO>> EditProductAsync(ProductCDTO productCdto)
     {
-        var product = new Product()
-        {
-            ProductId = new Guid(),
-
-            Name = request.Name,
-            WeightInGrams = request.WeightInGrams,
-            PricePerUnit = request.PricePerUnit,
-
-            Description = request.Description,
-            ImageUrl = request.ImageUrl,
-            InStock = request.InStock ?? -1,
-            
-            SellerId = request.SellerId,
-        };
+        var product = productCdto.ToProductDto();
         
         var productResponse = await _httpClient.SendRequestAsync(new RestRequestForm(
-            ApiRoutesDb.Controllers.ProductContr + ApiRoutesDb.UniversalActions.UpdatePath,
-            HttpMethod.Put, jsonData: JsonConvert.SerializeObject(product)));
+            endPoint: ApiRoutesDb.Controllers.ProductContr + ApiRoutesDb.UniversalActions.UpdateAction,
+            requestMethod: HttpMethod.Put, 
+            jsonData: JsonConvert.SerializeObject(product)));
 
-        return await ResponseHandlerAsync<Product>(productResponse);
+        var dtoResult = await ResponseHandlerAsync<ProductDTO>(productResponse);
+        return new UniversalResponse<ProductCDTO>(
+            info: dtoResult.Info, errorInfo: dtoResult.ErrorInfo, 
+            responseObject: dtoResult.ResponseObject?.ToProductCDto());
     }
     
-    public async Task<LambdaResponse<Product>> GetProductByIdAsync(Guid id)
+    public async Task<UniversalResponse<ProductCDTO>> GetProductByIdAsync(Guid id)
     {
         var productResponse = await _httpClient.SendRequestAsync(new RestRequestForm(
-            ApiRoutesDb.Controllers.ProductContr + ApiRoutesDb.UniversalActions.GetByIdPath + id,
-            HttpMethod.Get));
+            endPoint: ApiRoutesDb.Controllers.ProductContr + ApiRoutesDb.UniversalActions.GetByIdAction,
+            requestMethod: HttpMethod.Get,
+            jsonData: JsonConvert.SerializeObject(id)));
 
-        return await ResponseHandlerAsync<Product>(productResponse);
+        var dtoResult = await ResponseHandlerAsync<ProductDTO>(productResponse);
+        return new UniversalResponse<ProductCDTO>(
+            info: dtoResult.Info, errorInfo: dtoResult.ErrorInfo, 
+            responseObject: dtoResult.ResponseObject?.ToProductCDto());
     }
 
-    public async Task<LambdaResponse<List<Product>>> GetAllProductsAsync()
+    public async Task<UniversalResponse<List<ProductCDTO>>> GetAllProductsAsync()
     {
         var productResponse = await _httpClient.SendRequestAsync(new RestRequestForm(
-            ApiRoutesDb.Controllers.ProductContr + ApiRoutesDb.UniversalActions.GetAllPath,
-            HttpMethod.Get));
+            endPoint: ApiRoutesDb.Controllers.ProductContr + ApiRoutesDb.UniversalActions.GetAllAction,
+            requestMethod: HttpMethod.Get));
 
-        return await ResponseHandlerAsync<List<Product>>(productResponse);
+        var dtoResult = await ResponseHandlerAsync<List<ProductDTO>>(productResponse);
+        return new UniversalResponse<List<ProductCDTO>>(
+            info: dtoResult.Info, errorInfo: dtoResult.ErrorInfo, 
+            responseObject: dtoResult.ResponseObject?.Select(p => p.ToProductCDto()).ToList());
     }
 
-    public async Task<LambdaResponse<List<Product>>> GetAllProductsBySellerIdAsync(Guid id)
+    public async Task<UniversalResponse<List<ProductCDTO>>> GetAllProductsBySellerIdAsync(Guid id)
     {
         var productResponse = await _httpClient.SendRequestAsync(new RestRequestForm(
-            ApiRoutesDb.Controllers.ProductContr + ApiRoutesDb.UniversalActions.GetAllPath,
-            HttpMethod.Get));
+            endPoint: ApiRoutesDb.Controllers.ProductContr + ApiRoutesDb.UniversalActions.GetAllAction,
+            requestMethod: HttpMethod.Get));
 
-        var serverResponse = await JsonHelper.GetTypeFromResponseAsync<LambdaResponse<List<Product>>>(productResponse);
+        var serverResponse = await JsonHelper.GetTypeFromResponseAsync<UniversalResponse<List<ProductDTO>>>(productResponse);
 
         if (!productResponse.IsSuccessStatusCode)
         {
-            return new LambdaResponse<List<Product>>(errorInfo: serverResponse.ErrorInfo);
+            return new UniversalResponse<List<ProductCDTO>>(errorInfo: serverResponse.ErrorInfo);
         }
 
         if (serverResponse.ResponseObject is null) throw new Exception("Response object is null");
         
-        var userResponse = await _httpClient.SendRequestAsync(new RestRequestForm(
-            ApiRoutesDb.Controllers.UserContr + ApiRoutesDb.UniversalActions.GetByIdPath + id,
-            HttpMethod.Get));
+        var sellerProductList = serverResponse.ResponseObject.Where(pr => pr.SellerDtoId.Equals(id)).ToList();
 
-        var serverUserResponse = await JsonHelper.GetTypeFromResponseAsync<LambdaResponse<User>>(userResponse);
-
-        if (!userResponse.IsSuccessStatusCode)
-        {
-            return new LambdaResponse<List<Product>>(errorInfo: serverUserResponse.ErrorInfo);
-        }
-
-        if (serverUserResponse.ResponseObject is null) throw new Exception("Response object is null");
-
-        var sellerProductList = serverResponse.ResponseObject.Where(prdts => prdts.SellerId.Equals(serverUserResponse.ResponseObject.SellerId)).ToList();
-
-        return new LambdaResponse<List<Product>>(responseObject: sellerProductList, info: serverResponse.Info);
+        return new UniversalResponse<List<ProductCDTO>>(responseObject: sellerProductList.Select(pl => pl.ToProductCDto()).ToList(), info: serverResponse.Info);
     }
     
-    private async Task<LambdaResponse<T>> ResponseHandlerAsync<T>(HttpResponseMessage response) where T : class
+    private async Task<UniversalResponse<T>> ResponseHandlerAsync<T>(HttpResponseMessage response) where T : class
     {
-        var serverResponse = await JsonHelper.GetTypeFromResponseAsync<LambdaResponse<T>>(response);
+        var serverResponse = await JsonHelper.GetTypeFromResponseAsync<UniversalResponse<T>>(response);
 
         if (!response.IsSuccessStatusCode)
         {
-            return new LambdaResponse<T>(errorInfo: serverResponse.ErrorInfo);
+            return new UniversalResponse<T>(errorInfo: serverResponse.ErrorInfo);
         }
 
         if (serverResponse.ResponseObject is null) throw new Exception("Response object is null");
 
-        return new LambdaResponse<T>(responseObject: serverResponse.ResponseObject as T, info: serverResponse.Info);
+        return new UniversalResponse<T>(responseObject: serverResponse.ResponseObject as T, info: serverResponse.Info);
     }
     
-    private async Task<LambdaResponse> EmptyResponseHandlerAsync(HttpResponseMessage response)
+    private async Task<UniversalResponse> EmptyResponseHandlerAsync(HttpResponseMessage response)
     {
-        var serverResponse = await JsonHelper.GetTypeFromResponseAsync<LambdaResponse>(response);
+        var serverResponse = await JsonHelper.GetTypeFromResponseAsync<UniversalResponse>(response);
 
         if (!response.IsSuccessStatusCode)
         {
-            return new LambdaResponse(errorInfo: serverResponse.ErrorInfo);
+            return new UniversalResponse(errorInfo: serverResponse.ErrorInfo);
         }
 
-        return new LambdaResponse(info: serverResponse.Info);
+        return new UniversalResponse(info: serverResponse.Info);
     }
 }

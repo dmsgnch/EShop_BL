@@ -16,29 +16,36 @@ public class OrderController : ControllerBase
         _orderService = orderService;
     }
     
-    [HttpPost(ApiRoutes.OrderActions.AddProductPath)]
-    public async Task<IActionResult> AddProduct([FromBody]ProductCartRequest request)
+    [HttpPost(ApiRoutes.OrderActions.AddProductToCartOrderAction)]
+    public async Task<IActionResult> AddProductToCartOrder([FromBody]ProductCartRequest request)
     {
         var result = await _orderService.AddProductAsync(request);
         return result.Info is null ? BadRequest(result) : Ok(result);
     }
     
-    [HttpDelete(ApiRoutes.OrderActions.DeleteProductPath)]
-    public async Task<IActionResult> DeleteProduct([FromBody]ProductCartRequest request)
+    [HttpPost(ApiRoutes.OrderActions.CreateOrder)]
+    public async Task<IActionResult> CreateOrder([FromBody]Guid userId)
+    {
+        var result = await _orderService.CreateOrderAsync(userId);
+        return result.Info is null ? BadRequest(result) : Ok(result);
+    }
+    
+    [HttpDelete(ApiRoutes.OrderActions.DeleteProductFromCartOrderAction)]
+    public async Task<IActionResult> DeleteProductFromCartOrder([FromBody]ProductCartRequest request)
     {
         var result = await _orderService.DeleteProductAsync(request);
         return result.Info is null ? BadRequest(result) : Ok(result);
     }
     
-    [HttpGet(ApiRoutes.OrderActions.GetOrdersPath)]
-    public async Task<IActionResult> GetOrders([FromBody]Guid id)
+    [HttpGet(ApiRoutes.OrderActions.GetAllOrdersNotCartAction)]
+    public async Task<IActionResult> GetOrdersNotCart([FromBody]Guid id)
     {
         var result = await _orderService.GetOrdersAsync(id);
         return result.ResponseObject is null ? BadRequest(result) : Ok(result);
     }
     
-    [HttpGet(ApiRoutes.OrderActions.GetCartPath)]
-    public async Task<IActionResult> GetCart([FromBody]Guid id)
+    [HttpGet(ApiRoutes.OrderActions.GetCartOrderAction)]
+    public async Task<IActionResult> GetCartOrder([FromBody]Guid id)
     {
         var result = await _orderService.GetCartAsync(id);
         return result.ResponseObject is null ? BadRequest(result) : Ok(result);
