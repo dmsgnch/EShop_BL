@@ -16,6 +16,15 @@ public class HashProvider : IHashProvider
             bytes = hashGenerator.GetBytes(24);
         }
         return Convert.ToBase64String(bytes);
+        
+        // var salt = Convert.FromBase64String(saltString);
+        // byte[] bytes;
+        //
+        // using (var hmac = new HMACSHA256(salt))
+        // {
+        //     bytes = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
+        // }
+        // return Convert.ToBase64String(bytes);
     }
 
     public byte[] GenerateSalt()
