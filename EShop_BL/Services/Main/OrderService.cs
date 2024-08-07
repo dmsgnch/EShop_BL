@@ -1,7 +1,7 @@
 using EShop_BL.Components;
 using EShop_BL.Extensions;
 using EShop_BL.Helpers;
-using EShop_BL.Services.Main.Abstract;
+using EShop_BL.Services.Secondary.Abstract;
 using Newtonsoft.Json;
 using SharedLibrary.Models.ClientDtoModels.MainModels;
 using SharedLibrary.Models.DtoModels.MainModels;
@@ -10,13 +10,13 @@ using SharedLibrary.Requests;
 using SharedLibrary.Responses;
 using SharedLibrary.Routes;
 
-namespace EShop_BL.Services.Main;
+namespace EShop_BL.Services.Secondary;
 
 public class OrderService : IOrderService
 {
-    private readonly HttpClientService _httpClient;
+    private readonly HttpClientServiceBase _httpClient;
 
-    public OrderService(HttpClientService httpClientService)
+    public OrderService(HttpClientServiceBase httpClientService)
     {
         _httpClient = httpClientService;
     }
@@ -25,7 +25,7 @@ public class OrderService : IOrderService
     {
         if (request.CartId is null)
         {
-            var orders = await _httpClient.SendRequestAsync(new RestRequestForm(
+            var orders = await _httpClient.ProcessRequestAsync(new HttpRequestForm(
                 endPoint: ApiRoutesDb.Controllers.UserContr + ApiRoutesDb.UniversalActions.GetByIdAction,
                 requestMethod: HttpMethod.Get,
                 jsonData: JsonConvert.SerializeObject(request.UserId)));
@@ -45,7 +45,7 @@ public class OrderService : IOrderService
 
             if (cart is null)
             {
-                var responseCreateCart = await _httpClient.SendRequestAsync(new RestRequestForm(
+                var responseCreateCart = await _httpClient.ProcessRequestAsync(new HttpRequestForm(
                     endPoint: ApiRoutesDb.Controllers.OrderContr + ApiRoutesDb.OrderActions.CreateCartAction,
                     requestMethod: HttpMethod.Post,
                     jsonData: JsonConvert.SerializeObject(request.UserId)));
@@ -69,7 +69,7 @@ public class OrderService : IOrderService
 
         Guid cartId = request.CartId ?? throw new Exception("CartId is null");
 
-        var response = await _httpClient.SendRequestAsync(new RestRequestForm(
+        var response = await _httpClient.ProcessRequestAsync(new HttpRequestForm(
             endPoint: ApiRoutesDb.Controllers.OrderItemContr + ApiRoutesDb.UniversalActions.CreateAction,
             requestMethod: HttpMethod.Post,
             jsonData: JsonConvert.SerializeObject(new OrderItemDTO(cartId, request.ProductId, 1))));
@@ -79,7 +79,7 @@ public class OrderService : IOrderService
 
     public async Task<UniversalResponse> CreateOrderAsync(Guid userId)
     {
-        var orders = await _httpClient.SendRequestAsync(new RestRequestForm(
+        var orders = await _httpClient.ProcessRequestAsync(new HttpRequestForm(
             endPoint: ApiRoutesDb.Controllers.UserContr + ApiRoutesDb.UniversalActions.GetByIdAction,
             requestMethod: HttpMethod.Get,
             jsonData: JsonConvert.SerializeObject(userId)));
@@ -99,7 +99,7 @@ public class OrderService : IOrderService
 
         if (cart is null) throw new Exception("Cart cant be null");
 
-        var request = await _httpClient.SendRequestAsync(new RestRequestForm(
+        var request = await _httpClient.ProcessRequestAsync(new HttpRequestForm(
             endPoint: ApiRoutesDb.Controllers.OrderContr + ApiRoutesDb.OrderActions.CreateOrderAction,
             requestMethod: HttpMethod.Post,
             jsonData: JsonConvert.SerializeObject(cart.OrderDtoId)));
@@ -111,7 +111,7 @@ public class OrderService : IOrderService
     {
         if (request.CartId is null)
         {
-            var orders = await _httpClient.SendRequestAsync(new RestRequestForm(
+            var orders = await _httpClient.ProcessRequestAsync(new HttpRequestForm(
                 endPoint: ApiRoutesDb.Controllers.UserContr + ApiRoutesDb.UniversalActions.GetByIdAction,
                 requestMethod: HttpMethod.Get,
                 jsonData: JsonConvert.SerializeObject(request.UserId)));
@@ -134,7 +134,7 @@ public class OrderService : IOrderService
             request.CartId = cart.OrderDtoId;
         }
 
-        var orderItems = await _httpClient.SendRequestAsync(new RestRequestForm(
+        var orderItems = await _httpClient.ProcessRequestAsync(new HttpRequestForm(
             endPoint: ApiRoutesDb.Controllers.OrderItemContr + ApiRoutesDb.UniversalActions.GetAllAction,
             requestMethod: HttpMethod.Get));
 
@@ -153,7 +153,7 @@ public class OrderService : IOrderService
 
         if (orderItem is null) throw new Exception("Order item was not found");
 
-        var responseDeleteCart = await _httpClient.SendRequestAsync(new RestRequestForm(
+        var responseDeleteCart = await _httpClient.ProcessRequestAsync(new HttpRequestForm(
             endPoint: ApiRoutesDb.Controllers.OrderItemContr + ApiRoutesDb.UniversalActions.DeleteAction,
             requestMethod: HttpMethod.Delete,
             jsonData: JsonConvert.SerializeObject(orderItem.OrderItemDtoId)));
@@ -171,7 +171,7 @@ public class OrderService : IOrderService
     public async Task<UniversalResponse<OrderCDTO>> GetCartAsync(Guid id)
     {
         //Get user (+ role, seller, orders)
-        var orders = await _httpClient.SendRequestAsync(new RestRequestForm(
+        var orders = await _httpClient.ProcessRequestAsync(new HttpRequestForm(
             endPoint: ApiRoutesDb.Controllers.UserContr + ApiRoutesDb.UniversalActions.GetByIdAction,
             requestMethod: HttpMethod.Get,
             jsonData: JsonConvert.SerializeObject(id)));
@@ -193,7 +193,7 @@ public class OrderService : IOrderService
         if (shortCart is null) return new UniversalResponse<OrderCDTO>(errorInfo: "Cart is empty");
 
         //Use found cart order id to get Order (+ OrderEvents, OrderItems (+ Product))
-        var orderRequest = await _httpClient.SendRequestAsync(new RestRequestForm(
+        var orderRequest = await _httpClient.ProcessRequestAsync(new HttpRequestForm(
             endPoint: ApiRoutesDb.Controllers.OrderContr + ApiRoutesDb.UniversalActions.GetByIdAction,
             requestMethod: HttpMethod.Get,
             jsonData: JsonConvert.SerializeObject(shortCart.OrderDtoId)));
@@ -213,7 +213,7 @@ public class OrderService : IOrderService
     public async Task<UniversalResponse<List<OrderCDTO>>> GetOrdersAsync(Guid id)
     {
         //Get orders (+ OrderEvents, OrderItems (+ Product))
-        var orders = await _httpClient.SendRequestAsync(new RestRequestForm(
+        var orders = await _httpClient.ProcessRequestAsync(new HttpRequestForm(
             endPoint: ApiRoutesDb.Controllers.OrderContr + ApiRoutesDb.UniversalActions.GetAllAction,
             requestMethod: HttpMethod.Get));
 

@@ -1,7 +1,7 @@
 using EShop_BL.Components;
 using EShop_BL.Extensions;
 using EShop_BL.Helpers;
-using EShop_BL.Services.Main.Abstract;
+using EShop_BL.Services.Secondary.Abstract;
 using Newtonsoft.Json;
 using SharedLibrary.Models.ClientDtoModels.MainModels;
 using SharedLibrary.Models.DtoModels.MainModels;
@@ -9,15 +9,15 @@ using SharedLibrary.Requests;
 using SharedLibrary.Responses;
 using SharedLibrary.Routes;
 
-namespace EShop_BL.Services.Main;
+namespace EShop_BL.Services.Secondary;
 
 public class UserService : IUserService
 {
     private readonly IConfiguration _configuration;
-    private readonly IHttpClientService _httpClient;
+    private readonly HttpClientServiceBase _httpClient;
     private readonly IHashProvider _hashProvider;
 
-    public UserService(IConfiguration configuration, IHttpClientService httpClient, IHashProvider hashProvider)
+    public UserService(IConfiguration configuration, HttpClientServiceBase httpClient, IHashProvider hashProvider)
     {
         _configuration = configuration;
         _httpClient = httpClient;
@@ -32,7 +32,7 @@ public class UserService : IUserService
             user.ProvideSaltAndHash(_hashProvider);
         }
 
-        var userResponse = await _httpClient.SendRequestAsync(new RestRequestForm(
+        var userResponse = await _httpClient.ProcessRequestAsync(new HttpRequestForm(
             endPoint: ApiRoutesDb.Controllers.UserContr + ApiRoutesDb.UniversalActions.UpdateAction,
             requestMethod: HttpMethod.Put, 
             jsonData: JsonConvert.SerializeObject(user)));
@@ -42,7 +42,7 @@ public class UserService : IUserService
 
     public async Task<UniversalResponse<UserCDTO>> GetUserByIdAsync(Guid userId)
     {
-        var userResponse = await _httpClient.SendRequestAsync(new RestRequestForm(
+        var userResponse = await _httpClient.ProcessRequestAsync(new HttpRequestForm(
             endPoint: ApiRoutesDb.Controllers.UserContr + ApiRoutesDb.UniversalActions.GetByIdAction,
             requestMethod: HttpMethod.Get,
             jsonData: JsonConvert.SerializeObject(userId)));

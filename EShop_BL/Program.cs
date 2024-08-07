@@ -1,6 +1,6 @@
 using System.Text;
-using EShop_BL.Services.Main;
-using EShop_BL.Services.Main.Abstract;
+using EShop_BL.Services.Secondary;
+using EShop_BL.Services.Secondary.Abstract;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -21,7 +21,7 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IHashProvider, HashProvider>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
-builder.Services.AddScoped<IHttpClientService, HttpClientService>();
+builder.Services.AddScoped<HttpClientServiceBase, HttpClientService>();
 builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddEndpointsApiExplorer();

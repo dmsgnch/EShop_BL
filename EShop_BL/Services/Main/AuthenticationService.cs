@@ -6,7 +6,7 @@ using EShop_BL.Components;
 using EShop_BL.Helpers;
 using EShop_BL.Common.Constants;
 using EShop_BL.Extensions;
-using EShop_BL.Services.Main.Abstract;
+using EShop_BL.Services.Secondary.Abstract;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using SharedLibrary.Models.DtoModels.MainModels;
@@ -15,17 +15,17 @@ using SharedLibrary.Requests;
 using SharedLibrary.Responses;
 using SharedLibrary.Routes;
 
-namespace EShop_BL.Services.Main;
+namespace EShop_BL.Services.Secondary;
 
 public class AuthenticationService : IAuthenticationService
 {
     private readonly IConfiguration _configuration;
-    private readonly IHttpClientService _httpClient;
+    private readonly HttpClientServiceBase _httpClient;
     private readonly IHashProvider _hashProvider;
 
     private readonly int _jwtTokenDaysLiveTime = 24;
 
-    public AuthenticationService(IConfiguration configuration, IHttpClientService httpClient,
+    public AuthenticationService(IConfiguration configuration, HttpClientServiceBase httpClient,
         IHashProvider hashProvider)
     {
         _configuration = configuration;
@@ -42,7 +42,7 @@ public class AuthenticationService : IAuthenticationService
 
     private async Task<UniversalResponse<string>> GetAllUsersAsync(RegisterRequest registerRequest)
     {
-        var usersResponse = await _httpClient.SendRequestAsync(new RestRequestForm(
+        var usersResponse = await _httpClient.ProcessRequestAsync(new HttpRequestForm(
             ApiRoutesDb.Controllers.UserContr + ApiRoutesDb.UniversalActions.GetAllAction,
             HttpMethod.Get));
 
@@ -79,7 +79,7 @@ public class AuthenticationService : IAuthenticationService
         user.ProvideSaltAndHash(_hashProvider);
 
         var response =
-            await _httpClient.SendRequestAsync(new RestRequestForm(
+            await _httpClient.ProcessRequestAsync(new HttpRequestForm(
                 endPoint: ApiRoutesDb.Controllers.UserContr + ApiRoutesDb.UniversalActions.CreateAction,
                 requestMethod: HttpMethod.Post,
                 jsonData: JsonConvert.SerializeObject(user)));
@@ -102,7 +102,7 @@ public class AuthenticationService : IAuthenticationService
 
     public async Task<UniversalResponse<string>> LoginAsync(string email, string password)
     {
-        var usersResponse = await _httpClient.SendRequestAsync(new RestRequestForm(
+        var usersResponse = await _httpClient.ProcessRequestAsync(new HttpRequestForm(
             endPoint: ApiRoutesDb.Controllers.UserContr + ApiRoutesDb.UniversalActions.GetAllAction,
             requestMethod: HttpMethod.Get));
 

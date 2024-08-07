@@ -1,4 +1,4 @@
-using EShop_BL.Services.Main.Abstract;
+using EShop_BL.Services.Secondary.Abstract;
 using Microsoft.AspNetCore.Mvc;
 using SharedLibrary.Models.ClientDtoModels.MainModels;
 using SharedLibrary.Models.DtoModels.MainModels;

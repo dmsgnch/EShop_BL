@@ -1,4 +1,4 @@
-using EShop_BL.Services.Main.Abstract;
+using EShop_BL.Services.Secondary.Abstract;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using SharedLibrary.Requests;

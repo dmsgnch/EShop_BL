@@ -1,20 +1,20 @@
 using EShop_BL.Components;
 using EShop_BL.Extensions;
 using EShop_BL.Helpers;
-using EShop_BL.Services.Main.Abstract;
+using EShop_BL.Services.Secondary.Abstract;
 using Newtonsoft.Json;
 using SharedLibrary.Models.ClientDtoModels.MainModels;
 using SharedLibrary.Models.DtoModels.MainModels;
 using SharedLibrary.Responses;
 using SharedLibrary.Routes;
 
-namespace EShop_BL.Services.Main;
+namespace EShop_BL.Services.Secondary;
 
 public class SellerService : ISellerService
 {
-    private readonly HttpClientService _httpClient;
+    private readonly HttpClientServiceBase _httpClient;
 
-    public SellerService(HttpClientService httpClientService)
+    public SellerService(HttpClientServiceBase httpClientService)
     {
         _httpClient = httpClientService;
     }
@@ -23,7 +23,7 @@ public class SellerService : ISellerService
     {
         var seller = sellerCdto.ToSellerDto();
         
-        var userResponse = await _httpClient.SendRequestAsync(new RestRequestForm(
+        var userResponse = await _httpClient.ProcessRequestAsync(new HttpRequestForm(
             endPoint: ApiRoutesDb.Controllers.SellerContr + ApiRoutesDb.UniversalActions.CreateAction,
             requestMethod: HttpMethod.Post, 
             jsonData: JsonConvert.SerializeObject(seller)));
@@ -36,7 +36,7 @@ public class SellerService : ISellerService
     
     public async Task<UniversalResponse> DeleteSellerAsync(Guid id)
     {
-        var userResponse = await _httpClient.SendRequestAsync(new RestRequestForm(
+        var userResponse = await _httpClient.ProcessRequestAsync(new HttpRequestForm(
             endPoint: ApiRoutesDb.Controllers.SellerContr + ApiRoutesDb.UniversalActions.DeleteAction,
             requestMethod: HttpMethod.Delete,
             jsonData: JsonConvert.SerializeObject(id)));
@@ -48,7 +48,7 @@ public class SellerService : ISellerService
     {
         var seller = sellerCdto.ToSellerDto();
         
-        var userResponse = await _httpClient.SendRequestAsync(new RestRequestForm(
+        var userResponse = await _httpClient.ProcessRequestAsync(new HttpRequestForm(
             endPoint: ApiRoutesDb.Controllers.SellerContr + ApiRoutesDb.UniversalActions.UpdateAction,
             requestMethod: HttpMethod.Put, 
             jsonData: JsonConvert.SerializeObject(seller)));
@@ -61,7 +61,7 @@ public class SellerService : ISellerService
     
     public async Task<UniversalResponse<SellerCDTO>> GetSellerByIdAsync(Guid id)
     {
-        var userResponse = await _httpClient.SendRequestAsync(new RestRequestForm(
+        var userResponse = await _httpClient.ProcessRequestAsync(new HttpRequestForm(
             endPoint: ApiRoutesDb.Controllers.SellerContr + ApiRoutesDb.UniversalActions.GetByIdAction,
             requestMethod:HttpMethod.Get,
             jsonData: JsonConvert.SerializeObject(id)));
@@ -74,7 +74,7 @@ public class SellerService : ISellerService
 
     public async Task<UniversalResponse<List<SellerCDTO>>> GetAllSellersAsync()
     {
-        var userResponse = await _httpClient.SendRequestAsync(new RestRequestForm(
+        var userResponse = await _httpClient.ProcessRequestAsync(new HttpRequestForm(
             endPoint: ApiRoutesDb.Controllers.SellerContr + ApiRoutesDb.UniversalActions.GetAllAction,
             requestMethod: HttpMethod.Get));
 
@@ -86,7 +86,7 @@ public class SellerService : ISellerService
     
     public async Task<UniversalResponse<string>> GetSellerIdByUserIdAsync(Guid id)
     {
-        var getUsersRequest = await _httpClient.SendRequestAsync(new RestRequestForm(
+        var getUsersRequest = await _httpClient.ProcessRequestAsync(new HttpRequestForm(
             endPoint: ApiRoutesDb.Controllers.UserContr + ApiRoutesDb.UniversalActions.GetAllAction,
             requestMethod: HttpMethod.Get));
 
@@ -102,7 +102,7 @@ public class SellerService : ISellerService
         var sellerId = getUsersResult.ResponseObject.FirstOrDefault(u => u.UserDtoId.Equals(id))?.SellerDtoId;
         if (sellerId is null) throw new Exception("Seller was not found");
         
-        var response = await _httpClient.SendRequestAsync(new RestRequestForm(
+        var response = await _httpClient.ProcessRequestAsync(new HttpRequestForm(
             endPoint: ApiRoutesDb.Controllers.SellerContr + ApiRoutesDb.UniversalActions.GetByIdAction,
             requestMethod: HttpMethod.Get,
             jsonData: JsonConvert.SerializeObject(sellerId)));

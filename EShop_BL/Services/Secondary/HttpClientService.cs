@@ -2,13 +2,13 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 using EShop_BL.Components;
-using EShop_BL.Services.Main.Abstract;
+using EShop_BL.Services.Secondary.Abstract;
 using Newtonsoft.Json;
 using SharedLibrary.Responses;
 
-namespace EShop_BL.Services.Main;
+namespace EShop_BL.Services.Secondary;
 
-public class HttpClientService : IHttpClientService
+public class HttpClientService : HttpClientServiceBase
 {
     private readonly IHttpClientFactory _clientFactory;
     private const string DbUrl = "https://localhost:44381/";
@@ -18,81 +18,45 @@ public class HttpClientService : IHttpClientService
         _clientFactory = clientFactory;
     }
 
-    public async Task<HttpResponseMessage> SendRequestAsync(RestRequestForm requestForm)
+    protected override HttpRequestMessage CreateHttpRequest(HttpRequestForm requestForm)
     {
-        using (var client = _clientFactory.CreateClient("TradeWaveApiClient"))
+        var request = new HttpRequestMessage(requestForm.RequestMethod, DbUrl + requestForm.EndPoint);
+
+        if (requestForm.JsonData != null)
         {
-            try
-            {
-                var request = new HttpRequestMessage(requestForm.RequestMethod, DbUrl + requestForm.EndPoint);
+            request.Content = new StringContent(requestForm.JsonData, Encoding.UTF8, "application/json");
+        }
 
-                if (requestForm.JsonData != null)
-                {
-                    request.Content = new StringContent(requestForm.JsonData, Encoding.UTF8, "application/json");
-                }
+        if (!string.IsNullOrWhiteSpace(requestForm.Token))
+        {
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", requestForm.Token);
+        }
 
-                if (!string.IsNullOrWhiteSpace(requestForm.Token))
-                {
-                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", requestForm.Token);
-                }
+        return request;
+    }
 
-                var response = await client.SendAsync(request);
+    protected override async Task<HttpResponseMessage> SendHttpRequestAsync(HttpRequestMessage request)
+    {
+        var client = _clientFactory.CreateClient("MyHttpClient");
+        var response = await client.SendAsync(request);
+        return response;
+    }
 
-                if (response.IsSuccessStatusCode)
-                {
-                    await LogMachine.LogRequestToJson("Successful communication with the database server");
-                    return response;
-                }
-                else
-                {
-                    await LogMachine.LogRequestToJson(
-                        "Communication with the database server occurred, but an unsuccessful action code was received");
-                    Console.WriteLine(
-                        $"The query returned an error code: {response.StatusCode}. Message: {await response.Content.ReadAsStringAsync()}");
-                    if (response.StatusCode == HttpStatusCode.BadRequest)
-                    {
-                        return response;
-                    }
-                    else
-                    {
-                        return new HttpResponseMessage(HttpStatusCode.BadGateway)
-                        {
-                            Content = new StringContent(
-                                JsonConvert.SerializeObject(new UniversalResponse(
-                                    "An unexpected error occurred on the server. Please try again! " +
-                                    "If the problem persists, please contact support.")))
-                        };
-                    }
-                }
-            }
-            catch (HttpRequestException httpEx)
+    protected override async Task<HttpResponseMessage> HandleResponseAsync(HttpResponseMessage response)
+    {
+        if (response.IsSuccessStatusCode)
+        {
+            await LogMachine.LogRequestToJson("Successful communication with the database server");
+            return response;
+        }
+        else
+        {
+            return new HttpResponseMessage(response.StatusCode)
             {
-                await LogMachine.LogRequestToJson($"HTTP request error: {httpEx.Message}");
-                Console.WriteLine($"HTTP request error: {httpEx.Message}");
-                return new HttpResponseMessage(HttpStatusCode.BadGateway)
-                {
-                    Content = new StringContent(
-                        JsonConvert.SerializeObject(new UniversalResponse(
-                            "An unexpected error occurred while trying to access the server. Please try again! " +
-                            "If the problem persists, please contact support.")))
-                };
-            }
-            catch (TaskCanceledException taskEx)
-            {
-                await LogMachine.LogRequestToJson("Request was canceled (possibly due to timeout).");
-                Console.WriteLine("Request was canceled (possibly due to timeout).");
-                return new HttpResponseMessage(HttpStatusCode.BadGateway)
-                {
-                    Content = new StringContent(
-                        JsonConvert.SerializeObject(new UniversalResponse("The server's not responding")))
-                };
-            }
-            catch (Exception ex)
-            {
-                await LogMachine.LogRequestToJson($"Unexpected error: {ex.Message}");
-                Console.WriteLine($"Unexpected error: {ex.Message}");
-                throw new Exception($"An unexpected error occurred: {ex.Message}");
-            }
+                Content = new StringContent(
+                    JsonConvert.SerializeObject(new UniversalResponse(
+                        "Api service error. Please try again!")))
+            };
         }
     }
 }

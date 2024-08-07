@@ -1,4 +1,4 @@
-using EShop_BL.Services.Main.Abstract;
+using EShop_BL.Services.Secondary.Abstract;
 using SharedLibrary.Models.DtoModels.MainModels;
 
 namespace EShop_BL.Helpers;

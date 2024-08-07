@@ -1,20 +1,20 @@
 using EShop_BL.Components;
 using EShop_BL.Extensions;
 using EShop_BL.Helpers;
-using EShop_BL.Services.Main.Abstract;
+using EShop_BL.Services.Secondary.Abstract;
 using Newtonsoft.Json;
 using SharedLibrary.Models.ClientDtoModels.MainModels;
 using SharedLibrary.Models.DtoModels.MainModels;
 using SharedLibrary.Responses;
 using SharedLibrary.Routes;
 
-namespace EShop_BL.Services.Main;
+namespace EShop_BL.Services.Secondary;
 
 public class ProductService : IProductService
 {
-    private readonly HttpClientService _httpClient;
+    private readonly HttpClientServiceBase _httpClient;
 
-    public ProductService(HttpClientService httpClientService)
+    public ProductService(HttpClientServiceBase httpClientService)
     {
         _httpClient = httpClientService;
     }
@@ -23,7 +23,7 @@ public class ProductService : IProductService
     {
         var product = productCDto.ToProductDto();
         
-        var productResponse = await _httpClient.SendRequestAsync(new RestRequestForm(
+        var productResponse = await _httpClient.ProcessRequestAsync(new HttpRequestForm(
             endPoint: ApiRoutesDb.Controllers.ProductContr + ApiRoutesDb.UniversalActions.CreateAction,
             requestMethod:HttpMethod.Post, 
             jsonData: JsonConvert.SerializeObject(product)));
@@ -36,7 +36,7 @@ public class ProductService : IProductService
     
     public async Task<UniversalResponse> DeleteProductAsync(Guid id)
     {
-        var productResponse = await _httpClient.SendRequestAsync(new RestRequestForm(
+        var productResponse = await _httpClient.ProcessRequestAsync(new HttpRequestForm(
             endPoint: ApiRoutesDb.Controllers.ProductContr + ApiRoutesDb.UniversalActions.DeleteAction,
             requestMethod: HttpMethod.Delete,
             jsonData: JsonConvert.SerializeObject(id)));
@@ -48,7 +48,7 @@ public class ProductService : IProductService
     {
         var product = productCdto.ToProductDto();
         
-        var productResponse = await _httpClient.SendRequestAsync(new RestRequestForm(
+        var productResponse = await _httpClient.ProcessRequestAsync(new HttpRequestForm(
             endPoint: ApiRoutesDb.Controllers.ProductContr + ApiRoutesDb.UniversalActions.UpdateAction,
             requestMethod: HttpMethod.Put, 
             jsonData: JsonConvert.SerializeObject(product)));
@@ -61,7 +61,7 @@ public class ProductService : IProductService
     
     public async Task<UniversalResponse<ProductCDTO>> GetProductByIdAsync(Guid id)
     {
-        var productResponse = await _httpClient.SendRequestAsync(new RestRequestForm(
+        var productResponse = await _httpClient.ProcessRequestAsync(new HttpRequestForm(
             endPoint: ApiRoutesDb.Controllers.ProductContr + ApiRoutesDb.UniversalActions.GetByIdAction,
             requestMethod: HttpMethod.Get,
             jsonData: JsonConvert.SerializeObject(id)));
@@ -74,7 +74,7 @@ public class ProductService : IProductService
 
     public async Task<UniversalResponse<List<ProductCDTO>>> GetAllProductsAsync()
     {
-        var productResponse = await _httpClient.SendRequestAsync(new RestRequestForm(
+        var productResponse = await _httpClient.ProcessRequestAsync(new HttpRequestForm(
             endPoint: ApiRoutesDb.Controllers.ProductContr + ApiRoutesDb.UniversalActions.GetAllAction,
             requestMethod: HttpMethod.Get));
 
@@ -86,7 +86,7 @@ public class ProductService : IProductService
 
     public async Task<UniversalResponse<List<ProductCDTO>>> GetAllProductsBySellerIdAsync(Guid id)
     {
-        var productResponse = await _httpClient.SendRequestAsync(new RestRequestForm(
+        var productResponse = await _httpClient.ProcessRequestAsync(new HttpRequestForm(
             endPoint: ApiRoutesDb.Controllers.ProductContr + ApiRoutesDb.UniversalActions.GetAllAction,
             requestMethod: HttpMethod.Get));
 

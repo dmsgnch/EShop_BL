@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
-using EShop_BL.Services.Main.Abstract;
+using EShop_BL.Services.Secondary.Abstract;
 
-namespace EShop_BL.Services.Main;
+namespace EShop_BL.Services.Secondary;
 
 public class HashProvider : IHashProvider
 {

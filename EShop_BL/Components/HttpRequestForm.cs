@@ -1,14 +1,14 @@
 
 namespace EShop_BL.Components
 {
-    public class RestRequestForm
+    public class HttpRequestForm
     {
         public string EndPoint { get; }
         public HttpMethod RequestMethod { get; }
         public string? Token { get; set; }
         public string? JsonData { get; }
 
-        public RestRequestForm(string endPoint,
+        public HttpRequestForm(string endPoint,
             HttpMethod requestMethod,
             string token = null,
             string jsonData = null)

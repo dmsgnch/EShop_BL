@@ -1,7 +1,7 @@
 ﻿using SharedLibrary.Requests;
 using SharedLibrary.Responses;
 
-namespace EShop_BL.Services.Main.Abstract;
+namespace EShop_BL.Services.Secondary.Abstract;
 
 public interface IAuthenticationService
 {
